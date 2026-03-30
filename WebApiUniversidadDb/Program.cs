@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebApiUniversidadDb.Infrastructure.Databases;
+using WebApiUniversidadDb.Infrastructure.Interfaces;
+using WebApiUniversidadDb.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,18 +15,16 @@ builder.Services.AddDbContext<UniversidadDbContext>(
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddOpenApi();
 
-// Swagger / OpenAPI
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
