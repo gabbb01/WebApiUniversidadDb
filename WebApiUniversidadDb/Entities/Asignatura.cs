@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace WebApiUniversidadDb.Entities
 {
     public class Asignatura
@@ -12,4 +11,4 @@ namespace WebApiUniversidadDb.Entities
         public bool Activo { get; set; }
         public DateTime FechaCreacion { get; set; }
     }                                                                                   
-    }
+}

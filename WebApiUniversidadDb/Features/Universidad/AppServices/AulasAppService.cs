@@ -10,9 +10,9 @@ namespace WebApiUniversidadDb.Features.Universidad.AppServices
 {
     public class AulasAppService : IAulasAppService
     {
-        private readonly AulasRepository aulasRepository;
+        private readonly IAulasRepository aulasRepository;
         private readonly AulasDomainService aulasDomainService;
-        public AulasAppService(AulasRepository aulasRepository, AulasDomainService aulasDomainService)
+        public AulasAppService(IAulasRepository aulasRepository, AulasDomainService aulasDomainService)
         {
             this.aulasRepository = aulasRepository;
             this.aulasDomainService = aulasDomainService;

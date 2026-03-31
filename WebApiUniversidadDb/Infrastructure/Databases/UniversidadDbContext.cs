@@ -121,7 +121,7 @@ namespace WebApiUniversidadDb.Infrastructure.Databases
 
             });
 
-            //Mapeo para tabla estudiante
+            //Mapeo para tabla profesor
             modelBuilder.Entity<Profesor>(entity =>
             {
                 entity.ToTable("Profesores");
