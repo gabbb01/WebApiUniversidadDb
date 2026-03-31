@@ -4,10 +4,10 @@ namespace WebApiUniversidadDb.Infrastructure.Interfaces
 {
     public interface IAsignaturasRepository
     {
-        Task<IEnumerable<Asignatura>> GetAllAsync();
-        Task<Asignatura?> GetByIdAsync(int id);
-        Task<Asignatura> CreateAsync(Asignatura asignatura);
-        Task<bool> UpdateAsync(Asignatura asignatura);
-        Task<bool> DeleteAsync(int id);
+        Task<List<Asignatura>> ObtenerAsignaturas();
+        Task<Asignatura?> ObtenerAsignaturaId(int id);
+        Task AgregarAsignatura(Asignatura asignatura);
+        Task ActualizarAsignatura(Asignatura asignatura);
+        Task InactivarAsignatura(int id);
     }
 }

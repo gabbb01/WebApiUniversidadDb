@@ -4,10 +4,10 @@ namespace WebApiUniversidadDb.Infrastructure.Interfaces
 {
     public interface IProfesoresRepository
     {
-        Task<IEnumerable<Profesor>> GetAllAsync();
-        Task<Profesor?> GetByIdAsync(int id);
-        Task<Profesor> CreateAsync(Profesor profesor);
-        Task<bool> UpdateAsync(Profesor profesor);
-        Task<bool> DeleteAsync(int id);
+        Task<List<Profesor>> ObtenerProfesores();
+        Task<Profesor?> ObtenerProfesorId(int id);
+        Task AgregarProfesor(Profesor profesor);
+        Task ActualizarProfesor(Profesor profesor);
+        Task InactivarProfesor(int id);
     }
 }
