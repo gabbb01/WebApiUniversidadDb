@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.Xml;
 using WebApiUniversidadDb.Entities;
 using WebApiUniversidadDb.Infrastructure.Databases;
 using WebApiUniversidadDb.Infrastructure.Interfaces;
@@ -7,57 +8,55 @@ namespace WebApiUniversidadDb.Infrastructure.Repository
 {
     public class EstudiantesRepository : IEstudiantesRepository
     {
-        private readonly UniversidadDbContext _context;
+        private readonly UniversidadDbContext universidadDbContext;
 
-        public EstudiantesRepository(UniversidadDbContext context)
+        public EstudiantesRepository(UniversidadDbContext universidadDbContext)
         {
-            _context = context;
+            this.universidadDbContext = universidadDbContext;
         }
 
-        public async Task<IEnumerable<Estudiante>> GetAllAsync()
+        public async Task ActualizarEstudiante(Estudiante estudiante)
         {
-            return await _context.Estudiantes
-                .Where(e => e.Activo)
-                .ToListAsync();
+            Estudiante estudianteExistente =
+                universidadDbContext.Estudiantes
+                .FirstOrDefault(x => x.EstudianteId == estudiante.EstudianteId)!;
+
+            estudianteExistente.NumeroCuenta = estudiante.NumeroCuenta;
+            estudianteExistente.Nombre = estudiante.Nombre;
+            estudianteExistente.Apellido = estudiante.Apellido;
+            estudianteExistente.Correo = estudiante.Correo;
+            estudianteExistente.Activo = estudiante.Activo;
+
+            await universidadDbContext.SaveChangesAsync();
         }
 
-        public async Task<Estudiante?> GetByIdAsync(int id)
+        public async Task AgregarEstudiante(Estudiante estudiante)
         {
-            return await _context.Estudiantes
-                .FirstOrDefaultAsync(e => e.EstudianteId == id && e.Activo);
+            universidadDbContext.Estudiantes.Add(estudiante);
+            await universidadDbContext.SaveChangesAsync();
         }
 
-        public async Task<Estudiante> CreateAsync(Estudiante estudiante)
+        public async Task InactivarEstudiante(int id)
         {
-            estudiante.FechaCreacion = DateTime.Now;
-            estudiante.Activo = true;
-            _context.Estudiantes.Add(estudiante);
-            await _context.SaveChangesAsync();
-            return estudiante;
+            Estudiante estudianteExistente =
+                universidadDbContext.Estudiantes
+                .FirstOrDefault(x => x.EstudianteId == id)!;
+
+            estudianteExistente.Activo = false;
+
+            await universidadDbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> UpdateAsync(Estudiante estudiante)
+        public async Task<Estudiante?> ObtenerEstudianteId(int id)
         {
-            var existing = await _context.Estudiantes.FindAsync(estudiante.EstudianteId);
-            if (existing == null) return false;
-
-            existing.NumeroCuenta = estudiante.NumeroCuenta;
-            existing.Nombre = estudiante.Nombre;
-            existing.Apellido = estudiante.Apellido;
-            existing.Correo = estudiante.Correo;
-
-            await _context.SaveChangesAsync();
-            return true;
+            Estudiante? estudiante =
+                await universidadDbContext.Estudiantes.FirstOrDefaultAsync(x => x.EstudianteId == id);
+            return estudiante ?? new Estudiante();
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<List<Estudiante>> ObtenerEstudiantes()
         {
-            var existing = await _context.Estudiantes.FindAsync(id);
-            if (existing == null) return false;
-
-            existing.Activo = false;
-            await _context.SaveChangesAsync();
-            return true;
+            return await universidadDbContext.Estudiantes.ToListAsync();
         }
     }
 }

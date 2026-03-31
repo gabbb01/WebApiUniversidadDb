@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.Xml;
 using WebApiUniversidadDb.Entities;
 using WebApiUniversidadDb.Infrastructure.Databases;
 using WebApiUniversidadDb.Infrastructure.Interfaces;
@@ -7,55 +8,53 @@ namespace WebApiUniversidadDb.Infrastructure.Repository
 {
     public class AulasRepository : IAulasRepository
     {
-        private readonly UniversidadDbContext _context;
+        private readonly UniversidadDbContext universidadDbContext;
 
-        public AulasRepository(UniversidadDbContext context)
+        public AulasRepository(UniversidadDbContext universidadDBContext, UniversidadDbContext universidadDbContext)
         {
-            _context = context;
+            this.universidadDbContext = universidadDbContext;
         }
 
-        public async Task<IEnumerable<Aula>> GetAllAsync()
+        public async Task ActualizarAula(Aula aula)
         {
-            return await _context.Aulas
-                .Where(a => a.Activo)
-                .ToListAsync();
+            Aula aulaExistente =
+                universidadDbContext.Aulas
+                .FirstOrDefault(x => x.AulaId == aula.AulaId)!;
+
+            aulaExistente.CodigoAula = aula.CodigoAula;
+            aulaExistente.Capacidad = aula.Capacidad;
+            aulaExistente.Activo = aula.Activo;
+
+            await universidadDbContext.SaveChangesAsync();
         }
 
-        public async Task<Aula?> GetByIdAsync(int id)
+        public async Task AgregarAula(Aula aula)
         {
-            return await _context.Aulas
-                .FirstOrDefaultAsync(a => a.AulaId == id && a.Activo);
+            universidadDbContext.Aulas.Add(aula);
+            await universidadDbContext.SaveChangesAsync();
         }
 
-        public async Task<Aula> CreateAsync(Aula aula)
+        public async Task InactivarAula(int id)
         {
-            aula.FechaCreacion = DateTime.Now;
-            aula.Activo = true;
-            _context.Aulas.Add(aula);
-            await _context.SaveChangesAsync();
-            return aula;
+            Aula aulaExistente =
+                universidadDbContext.Aulas
+                .FirstOrDefault(x => x.AulaId == id)!;
+
+            aulaExistente.Activo = false;
+
+            await universidadDbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> UpdateAsync(Aula aula)
+        public async Task<List<Aula>> ObtenerAula()
         {
-            var existing = await _context.Aulas.FindAsync(aula.AulaId);
-            if (existing == null) return false;
-
-            existing.CodigoAula = aula.CodigoAula;
-            existing.Capacidad = aula.Capacidad;
-
-            await _context.SaveChangesAsync();
-            return true;
+            return await universidadDbContext.Aulas.ToListAsync();
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<Aula?> ObtenerAulaId(int id)
         {
-            var existing = await _context.Aulas.FindAsync(id);
-            if (existing == null) return false;
-
-            existing.Activo = false;
-            await _context.SaveChangesAsync();
-            return true;
+            Aula? aula =
+                await universidadDbContext.Aulas.FirstOrDefaultAsync(x => x.AulaId == id);
+            return aula ?? new Aula();
         }
     }
 }
