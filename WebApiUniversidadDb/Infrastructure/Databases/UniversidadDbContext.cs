@@ -5,15 +5,14 @@ namespace WebApiUniversidadDb.Infrastructure.Databases
 {
     public class UniversidadDbContext : DbContext
     {
-        public UniversidadDbContext(DbContextOptions<UniversidadDbContext> options)
-            : base(options)
+        public UniversidadDbContext(DbContextOptions options) : base(options)
         {
         }
 
-        public DbSet<Asignatura> Asignaturas { get; set; }
-        public DbSet<Aula> Aulas { get; set; }
-        public DbSet<Estudiante> Estudiantes { get; set; }
-        public DbSet<Profesor> Profesores { get; set; }
+        public DbSet<Asignatura> Asignaturas => Set<Asignatura>();
+        public DbSet<Aula> Aulas => Set<Aula>();
+        public DbSet<Estudiante> Estudiantes => Set<Estudiante>();
+        public DbSet<Profesor> Profesores => Set<Profesor>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
