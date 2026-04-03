@@ -24,14 +24,14 @@ namespace WebApiUniversidadDb.Controllers
         [Route("{id}")]
         public async Task<IActionResult> ObtenerAulaId([FromRoute] int id)
         {
-            Aula aula = await aulasAppService.ObtenerAulaId(id);
+            Aula? aula = await aulasAppService.ObtenerAulaId(id);
             return Ok(aula);
         }
         [HttpPost]
         public async Task<IActionResult> AgregarAula([FromBody] Aula aula)
         {
-            var respuest = await aulasAppService.AgregarAula(aula);
-            return Ok(respuest);
+            var respuesta = await aulasAppService.AgregarAula(aula);
+            return Ok(respuesta);
         }
         [HttpPut]
         public async Task<IActionResult> ActualizarAula([FromBody] Aula aula)
