@@ -11,8 +11,8 @@ namespace WebApiUniversidadDb.Features.Universidad.AppServices
     public class ProfesoresAppService : IProfesoresAppService
     {
         private readonly ProfesoresDomainService profesoresDomainService;
-        private readonly ProfesoresRepository profesoresRepository;
-        public ProfesoresAppService(ProfesoresDomainService profesoresDomainService, ProfesoresRepository profesoresRepository)
+        private readonly IProfesoresRepository profesoresRepository;
+        public ProfesoresAppService(ProfesoresDomainService profesoresDomainService, IProfesoresRepository profesoresRepository)
         {
             this.profesoresDomainService = profesoresDomainService;
             this.profesoresRepository = profesoresRepository;
