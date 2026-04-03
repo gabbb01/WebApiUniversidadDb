@@ -26,7 +26,7 @@ namespace WebApiUniversidadDb.Controllers
         [Route("{id}")]
         public async Task<IActionResult> ObtenerProfesoresId([FromRoute] int id)
         {
-            Profesor profesor = await profesoresAppService.ObtenerProfesorId(id);
+            Profesor? profesor = await profesoresAppService.ObtenerProfesorId(id);
             return Ok(profesor);
         }
         [HttpPost]
@@ -46,7 +46,7 @@ namespace WebApiUniversidadDb.Controllers
         public async Task<IActionResult> InactivarProfesor([FromRoute] int id)
         {
             await profesoresAppService.InactivarProfesor(id);
-            return Ok("Profesor inactivado");
+            return Ok("Profesor Inactivado");
         }
     }
 }

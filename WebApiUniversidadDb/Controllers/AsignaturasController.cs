@@ -52,7 +52,7 @@ namespace WebApiUniversidadDb.Controllers
         {
             await asignaturasAppService.InactivarAsignatura(id);
 
-            return Ok("Registro Inactivado");
+            return Ok("Asignatura Inactivada");
         }
     }
 }
