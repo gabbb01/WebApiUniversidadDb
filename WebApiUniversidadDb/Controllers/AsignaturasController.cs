@@ -43,8 +43,8 @@ namespace WebApiUniversidadDb.Controllers
         public async Task<IActionResult> ActualizarAsignatura(
             [FromBody] Asignatura asignatura)
         {
-            await asignaturasAppService.ActualizarAsignatura(asignatura);
-            return Ok("Asignatura Actualizada");
+            var respuesta = await asignaturasAppService.ActualizarAsignatura(asignatura);
+            return Ok(respuesta);
         }
         [HttpDelete]
         [Route("{id}")]

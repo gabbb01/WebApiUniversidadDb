@@ -8,7 +8,7 @@ namespace WebApiUniversidadDb.Entities
         public int Creditos { get; set; }
         public int ProfesorId { get; set; }
         public int AulaId { get; set; }
-        public bool Activo { get; set; }
-        public DateTime FechaCreacion { get; set; }
+        public bool Activo { get; set; } = true;
+        public DateTime FechaCreacion { get; set; } = DateTime.Now;
     }                                                                                   
 }

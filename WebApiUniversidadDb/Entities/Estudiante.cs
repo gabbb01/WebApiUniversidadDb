@@ -9,7 +9,7 @@ namespace WebApiUniversidadDb.Entities
         public string? Nombre { get; set; }
         public string? Apellido { get; set; }
         public string? Correo { get; set; }
-        public bool Activo { get; set; }
-        public DateTime FechaCreacion { get; set; }
+        public bool Activo { get; set; } = true;
+        public DateTime FechaCreacion { get; set; } = DateTime.Now;
     }
 }
