@@ -21,6 +21,7 @@ export class AdminProfesores implements OnInit {
     public nombre: string = '';
     public apellido: string = '';
     public especialidad: string = '';
+    public activo: boolean = true;
     public accionModal: string = 'Guardar';
     
     public modal: any;
@@ -82,6 +83,7 @@ export class AdminProfesores implements OnInit {
         this.nombre = profesor.nombre;
         this.apellido = profesor.apellido;
         this.especialidad = profesor.especialidad;
+        this.activo = profesor.activo;
         this.modal.show();
     }
     
