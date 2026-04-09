@@ -1,1 +1,87 @@
-<p>admin-profesores works!</p>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Gestión de Profesores</h2>
+        <button class="btn btn-primary" (click)="abrirModalGuardar()">
+        <i class="bi bi-plus-circle"></i> Nuevo Profesor
+        </button>
+    </div>
+
+    <div class="row">
+        @for (profesor of profesores; track profesor.profesorId) {
+        <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+            <h5 class="card-title">
+                {{ profesor.nombre }} {{ profesor.apellido }}
+            </h5>
+
+            <p class="card-text mb-1">
+                <strong>Especialidad:</strong> {{ profesor.especialidad }}
+            </p>
+
+            <p class="card-text mb-1">
+                <strong>Estado:</strong>
+                <span 
+                class="badge"
+                [ngClass]="profesor.activo ? 'bg-success' : 'bg-danger'">
+                {{ profesor.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+            </p>
+
+            <p class="card-text">
+                <small class="text-muted">
+                Creado: {{ profesor.fechaCreacion | date:'short' }}
+                </small>
+            </p>
+            </div>
+            
+            <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
+            <button class="btn btn-outline-warning btn-sm" (click)="cargarParaActualizar(profesor)">
+                Editar
+            </button>
+            <button class="btn btn-outline-danger btn-sm" (click)="inactivarProfesor(profesor.profesorId)">
+                Inactivar
+            </button>
+            </div>
+        </div>
+        </div>
+        } @empty {
+        <div class="col-12 text-center">
+            <p class="text-muted">No hay profesores registrados.</p>
+        </div>
+        }
+    </div>
+    </div>
+
+    <div class="modal fade" id="modalProfesores" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{ accionModal }} Profesor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form>
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input type="text" class="form-control" name="nombre" [(ngModel)]="nombre">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Apellido</label>
+                <input type="text" class="form-control" name="apellido" [(ngModel)]="apellido">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Especialidad</label>
+                <input type="text" class="form-control" name="especialidad" [(ngModel)]="especialidad">
+            </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" (click)="guardarProfesor()">
+            {{ accionModal }}
+            </button>
+        </div>
+        </div>
+    </div>
+</div>

@@ -8,6 +8,17 @@ using WebApiUniversidadDb.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 // Base de datos
 builder.Services.AddDbContext<UniversidadDbContext>(
     options =>
@@ -62,6 +73,8 @@ builder.Services.AddOpenApi();
 
 
 var app = builder.Build();
+
+app.UseCors("AllowAllOrigins");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
