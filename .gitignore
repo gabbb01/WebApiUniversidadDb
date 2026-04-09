@@ -426,3 +426,16 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+# ==========================================
+# Angular / Frontend (UniversidadProject)
+# ==========================================
+**/UniversidadProject/node_modules/
+**/UniversidadProject/.angular/
+**/UniversidadProject/dist/
+**/UniversidadProject/tmp/
+**/UniversidadProject/out-tsc/
+**/UniversidadProject/bazel-out/
+
+# Archivos de configuración local de Angular
+**/UniversidadProject/.editorconfig
+**/UniversidadProject/.vscode/
