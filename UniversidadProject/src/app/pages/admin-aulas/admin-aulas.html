@@ -1,0 +1,93 @@
+<div class="container mt-4">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h2 class="text-dark"><i class="bi bi-door-open-fill"></i> Gestión de Aulas</h2>
+		<button class="btn btn-dark" (click)="abrirModalGuardar()">
+		<i class="bi bi-plus-lg"></i> Nueva Aula
+		</button>
+	</div>
+
+	<div class="row">
+		@for (aula of aulas; track aula.aulaId) {
+		<div class="col-md-4 col-sm-6 mb-4">
+		<div class="card shadow-sm h-100 border-0">
+			<div class="card-body text-center">
+			<div class="mb-3">
+				<i class="bi bi-building text-secondary" style="font-size: 2rem;"></i>
+			</div>
+			
+			<h5 class="card-title fw-bold text-uppercase">{{ aula.codigoAula }}</h5>
+			
+			<div class="my-3">
+				<span class="display-6 d-block">{{ aula.capacidad }}</span>
+				<small class="text-muted text-uppercase">Capacidad de alumnos</small>
+			</div>
+
+			<div class="mb-3">
+				<span class="badge" [ngClass]="aula.activo ? 'bg-success' : 'bg-danger'">
+				{{ aula.activo ? 'Disponible' : 'No Disponible' }}
+				</span>
+			</div>
+
+			<p class="card-text">
+				<small class="text-muted">
+				Creada: {{ aula.fechaCreacion | date:'dd/MM/yyyy' }}
+				</small>
+			</p>
+			</div>
+
+			<div class="card-footer bg-light border-0 d-flex justify-content-around pb-3">
+			<button class="btn btn-outline-primary btn-sm w-100 me-2" (click)="cargarParaActualizar(aula)">
+				<i class="bi bi-pencil-square"></i> Editar
+			</button>
+			<button class="btn btn-outline-danger btn-sm w-100" (click)="inactivarAula(aula.aulaId)">
+				<i class="bi bi-trash"></i> Inactivar
+			</button>
+			</div>
+		</div>
+		</div>
+		} @empty {
+		<div class="col-12">
+		<div class="alert alert-secondary text-center shadow-sm">
+			<i class="bi bi-info-circle me-2"></i> No hay aulas registradas en el sistema.
+		</div>
+		</div>
+		}
+	</div>
+	</div>
+
+	<div class="modal fade" id="modalAulas" tabindex="-1" aria-labelledby="modalAulasLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content border-0 shadow">
+		<div class="modal-header bg-dark text-white">
+			<h5 class="modal-title" id="modalAulasLabel">
+			<i class="bi bi-pencil-square me-2"></i>{{ accionModal }} Aula
+			</h5>
+			<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<form>
+			<div class="mb-3">
+				<label class="form-label fw-bold">Código del Aula</label>
+				<div class="input-group">
+				<span class="input-group-text"><i class="bi bi-hash"></i></span>
+				<input type="text" class="form-control" name="codigoAula" [(ngModel)]="codigoAula" placeholder="Ej: A-101">
+				</div>
+			</div>
+			<div class="mb-3">
+				<label class="form-label fw-bold">Capacidad Máxima</label>
+				<div class="input-group">
+				<span class="input-group-text"><i class="bi bi-people"></i></span>
+				<input type="number" class="form-control" name="capacidad" [(ngModel)]="capacidad" min="1">
+				</div>
+			</div>
+			</form>
+		</div>
+		<div class="modal-footer bg-light">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+			<button type="button" class="btn btn-dark" (click)="guardarAula()">
+			<i class="bi bi-save me-1"></i> {{ accionModal }} Datos
+			</button>
+		</div>
+		</div>
+	</div>
+</div>

@@ -7,61 +7,55 @@ namespace WebApiUniversidadDb.Infrastructure.Repository
 {
     public class AsignaturasRepository : IAsignaturasRepository
     {
-        private readonly UniversidadDbContext _context;
+        private readonly UniversidadDbContext universidadDbContext;
 
-        public AsignaturasRepository(UniversidadDbContext context)
+        public AsignaturasRepository(UniversidadDbContext universidadDbContext)
         {
-            _context = context;
+            this.universidadDbContext = universidadDbContext;
         }
 
-        public async Task<IEnumerable<Asignatura>> GetAllAsync()
+        public async Task<List<Asignatura>> ObtenerAsignaturas()
         {
-            return await _context.Asignaturas
-                .Where(a => a.Activo)
-                .Include(a => a.ProfesorId)
-                .Include(a => a.AulaId)
-                .ToListAsync();
+            return await universidadDbContext.Asignaturas.ToListAsync();
         }
 
-        public async Task<Asignatura?> GetByIdAsync(int id)
+        public async Task<Asignatura?> ObtenerAsignaturaId(int id)
         {
-            return await _context.Asignaturas
-                .Include(a => a.ProfesorId)
-                .Include(a => a.AulaId)
-                .FirstOrDefaultAsync(a => a.AsignaturaId == id && a.Activo);
+            Asignatura? asignatura =
+                await universidadDbContext.Asignaturas.FirstOrDefaultAsync(x => x.AsignaturaId == id);
+            return asignatura ?? new Asignatura();
         }
 
-        public async Task<Asignatura> CreateAsync(Asignatura asignatura)
+        public async Task AgregarAsignatura(Asignatura asignatura)
         {
-            asignatura.FechaCreacion = DateTime.Now;
-            asignatura.Activo = true;
-            _context.Asignaturas.Add(asignatura);
-            await _context.SaveChangesAsync();
-            return asignatura;
+            universidadDbContext.Asignaturas.Add(asignatura);
+            await universidadDbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> UpdateAsync(Asignatura asignatura)
+        public async Task ActualizarAsignatura(Asignatura asignatura)
         {
-            var existing = await _context.Asignaturas.FindAsync(asignatura.AsignaturaId);
-            if (existing == null) return false;
+            Asignatura asignaturaExistente =
+                universidadDbContext.Asignaturas
+                .FirstOrDefault(x => x.AsignaturaId == asignatura.AsignaturaId)!;
 
-            existing.Nombre = asignatura.Nombre;
-            existing.Creditos = asignatura.Creditos;
-            existing.ProfesorId = asignatura.ProfesorId;
-            existing.AulaId = asignatura.AulaId;
+            asignaturaExistente.Nombre = asignatura.Nombre;
+            asignaturaExistente.Creditos = asignatura.Creditos;
+            asignaturaExistente.ProfesorId = asignatura.ProfesorId;
+            asignaturaExistente.AulaId = asignatura.AulaId;
+            asignaturaExistente.Activo = asignatura.Activo;
 
-            await _context.SaveChangesAsync();
-            return true;
+            await universidadDbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task InactivarAsignatura(int id)
         {
-            var existing = await _context.Asignaturas.FindAsync(id);
-            if (existing == null) return false;
+            Asignatura asignaturaExistente =
+                universidadDbContext.Asignaturas
+                .FirstOrDefault(x => x.AsignaturaId == id)!;
 
-            existing.Activo = false;
-            await _context.SaveChangesAsync();
-            return true;
+            asignaturaExistente.Activo = false;
+
+            await universidadDbContext.SaveChangesAsync();
         }
     }
 }

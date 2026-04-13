@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.Xml;
 using WebApiUniversidadDb.Entities;
 using WebApiUniversidadDb.Infrastructure.Databases;
 using WebApiUniversidadDb.Infrastructure.Interfaces;
@@ -7,56 +8,54 @@ namespace WebApiUniversidadDb.Infrastructure.Repository
 {
     public class ProfesoresRepository : IProfesoresRepository
     {
-        private readonly UniversidadDbContext _context;
+        private readonly UniversidadDbContext universidadDbContext;
 
-        public ProfesoresRepository(UniversidadDbContext context)
+        public ProfesoresRepository(UniversidadDbContext universidadDbContext)
         {
-            _context = context;
+            this.universidadDbContext = universidadDbContext;
         }
 
-        public async Task<IEnumerable<Profesor>> GetAllAsync()
+        public async Task<List<Profesor>> ObtenerProfesores()
         {
-            return await _context.Profesores
-                .Where(p => p.Activo)
-                .ToListAsync();
+            return await universidadDbContext.Profesores.ToListAsync();
         }
 
-        public async Task<Profesor?> GetByIdAsync(int id)
+        public async Task<Profesor?> ObtenerProfesorId(int id)
         {
-            return await _context.Profesores
-                .FirstOrDefaultAsync(p => p.ProfesorId == id && p.Activo);
+            Profesor? profesor =
+                await universidadDbContext.Profesores.FirstOrDefaultAsync(x => x.ProfesorId == id);
+            return profesor ?? new Profesor();
         }
 
-        public async Task<Profesor> CreateAsync(Profesor profesor)
+        public async Task AgregarProfesor(Profesor profesor)
         {
-            profesor.FechaCreacion = DateTime.Now;
-            profesor.Activo = true;
-            _context.Profesores.Add(profesor);
-            await _context.SaveChangesAsync();
-            return profesor;
+            universidadDbContext.Profesores.Add(profesor);
+            await universidadDbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> UpdateAsync(Profesor profesor)
+        public async Task ActualizarProfesor(Profesor profesor)
         {
-            var existing = await _context.Profesores.FindAsync(profesor.ProfesorId);
-            if (existing == null) return false;
+            Profesor profesorExistente =
+                universidadDbContext.Profesores
+                .FirstOrDefault(x => x.ProfesorId == profesor.ProfesorId)!;
 
-            existing.Nombre = profesor.Nombre;
-            existing.Apellido = profesor.Apellido;
-            existing.Especialidad = profesor.Especialidad;
+            profesorExistente.Nombre = profesor.Nombre;
+            profesorExistente.Apellido = profesor.Apellido;
+            profesorExistente.Especialidad = profesor.Especialidad;
+            profesorExistente.Activo = profesor.Activo;
 
-            await _context.SaveChangesAsync();
-            return true;
+            await universidadDbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task InactivarProfesor(int id)
         {
-            var existing = await _context.Profesores.FindAsync(id);
-            if (existing == null) return false;
+            Profesor profesorExistente =
+                universidadDbContext.Profesores
+                .FirstOrDefault(x => x.ProfesorId == id)!;
 
-            existing.Activo = false;
-            await _context.SaveChangesAsync();
-            return true;
+            profesorExistente.Activo = false;
+
+            await universidadDbContext.SaveChangesAsync();
         }
     }
 }
