@@ -12,8 +12,8 @@ declare var bootstrap: any;
     standalone: true,
     templateUrl: './admin-estudiantes.html',
     styleUrl: './admin-estudiantes.css',
-    })
-    export class AdminEstudiantes implements OnInit {
+})
+export class AdminEstudiantes implements OnInit {
 
     public estudiantes: Estudiante[] = [];
 
@@ -27,9 +27,79 @@ declare var bootstrap: any;
 
     public modal: any;
 
-    constructor(private apiUniversidad: ApiUniversidad, private cdr: ChangeDetectorRef) {}
+    constructor(private apiUniversidad: ApiUniversidad, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
+        this.obtenerEstudiantes();
     }
 
+    ngAfterViewInit() {
+        const modal = document.getElementById('modalEstudiantes');
+        this.modal = new bootstrap.Modal(modal);
+    }
+
+    obtenerEstudiantes() {
+        this.apiUniversidad.obtenerEstudiantes().subscribe({
+            next: (data) => { this.estudiantes = data; this.cdr.detectChanges(); },
+            error: (error) => console.log(error),
+        });
+    }
+
+    abrirModalGuardar(): void {
+        this.accionModal = 'Guardar';
+        this.inicializarControles();
+        this.modal.show();
+    }
+
+    guardarEstudiante(): void {
+        if (this.accionModal.toUpperCase() === 'GUARDAR') {
+            this.agregarEstudiante();
+        } else {
+            this.actualizarEstudiante();
+        }
+    }
+
+    agregarEstudiante(): void {
+        const estudiante = new Estudiante(0, this.numeroCuenta, this.nombre, this.apellido, this.correo, true, new Date());
+        this.apiUniversidad.agregarEstudiante(estudiante).subscribe({
+            next: () => { this.obtenerEstudiantes(); this.modal.hide(); },
+            error: (error) => console.log(error),
+        });
+    }
+
+    actualizarEstudiante(): void {
+        const estudiante = new Estudiante(this.estudianteId, this.numeroCuenta, this.nombre, this.apellido, this.correo, true, new Date());
+        this.apiUniversidad.actualizarEstudiante(estudiante).subscribe({
+            next: () => { this.obtenerEstudiantes(); this.modal.hide(); },
+            error: (error) => console.log(error),
+        });
+    }
+
+    cargarParaActualizar(estudiante: Estudiante): void {
+        this.accionModal = 'Actualizar';
+        this.estudianteId = estudiante.estudianteId;
+        this.numeroCuenta = estudiante.numeroCuenta;
+        this.nombre = estudiante.nombre;
+        this.apellido = estudiante.apellido;
+        this.correo = estudiante.correo;
+        this.activo = estudiante.activo;
+        this.modal.show();
+    }
+
+    inactivarEstudiante(id: number): void {
+        if (confirm('¿Desea inactivar este estudiante?')) {
+            this.apiUniversidad.inactivarEstudiante(id).subscribe({
+                next: () => this.obtenerEstudiantes(),
+                error: (error) => console.log(error),
+            });
+        }
+    }
+
+    inicializarControles(): void {
+        this.estudianteId = 0;
+        this.numeroCuenta = '';
+        this.nombre = '';
+        this.apellido = '';
+        this.correo = '';
+    }
 }
