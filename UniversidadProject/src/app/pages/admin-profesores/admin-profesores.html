@@ -4,6 +4,9 @@
         <button class="btn btn-primary" (click)="abrirModalGuardar()">
         <i class="bi bi-plus-circle"></i> Nuevo Profesor
         </button>
+        <button routerLink="/" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </button>
     </div>
 
     <div class="row">
@@ -72,7 +75,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Especialidad</label>
-                <input type="text" class="form-control" name="especialidad" [(ngModel)]="especialidad">
+                <input type="text" class="form-control" name="especialidad" [(ngModel)]="especialidad" placeholder="Ej: Ingles">
             </div>
             <div class="mb-3">
                 <label class="form-label">Activo</label>

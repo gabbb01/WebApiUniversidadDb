@@ -3,12 +3,13 @@ import { ApiUniversidad } from '../../services/api-universidad';
 import { Estudiante } from '../../models/estudiante.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 declare var bootstrap: any;
 
 @Component({
     selector: 'app-admin-estudiantes',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule,RouterLink],
     standalone: true,
     templateUrl: './admin-estudiantes.html',
     styleUrl: './admin-estudiantes.css',
@@ -87,7 +88,7 @@ export class AdminEstudiantes implements OnInit {
     }
 
     inactivarEstudiante(id: number): void {
-        if (confirm('¿Desea inactivar este estudiante?')) {
+        if (confirm('ï¿½Desea inactivar este estudiante?')) {
             this.apiUniversidad.inactivarEstudiante(id).subscribe({
                 next: () => this.obtenerEstudiantes(),
                 error: (error) => console.log(error),

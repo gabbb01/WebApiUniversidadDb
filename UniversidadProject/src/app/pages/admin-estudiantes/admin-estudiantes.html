@@ -4,8 +4,10 @@
         <button class="btn btn-success" (click)="abrirModalGuardar()">
         <i class="bi bi-person-plus-fill"></i> Nuevo Estudiante
         </button>
+        <button routerLink="/" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </button>
     </div>
-
     <div class="row">
         @for (estudiante of estudiantes; track estudiante.estudianteId) {
         <div class="col-md-6 col-lg-4 mb-4">
@@ -83,11 +85,8 @@
                 <input type="email" class="form-control" name="correo" [(ngModel)]="correo" placeholder="usuario@unah.hn">
             </div>
             <div class="mb-3">
-                <label class="form-label fw-bold">Estado</label>
-                <select class="form-select" name="activo" [(ngModel)]="activo">
-                <option [value]="true">Activo</option>
-                <option [value]="false">Inactivo</option>
-                </select>
+                <label class="form-label">Activo</label>
+                <input type="checkbox" class="form-check-input" name="activo" [(ngModel)]="activo">
             </div>
             </form>
         </div>
