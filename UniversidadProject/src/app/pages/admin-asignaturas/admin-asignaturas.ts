@@ -5,12 +5,13 @@ import { Profesor } from '../../models/profesor.model';
 import { Aula } from '../../models/aula.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 declare var bootstrap: any;
 
 @Component({
     selector: 'app-admin-asignaturas',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, RouterLink],
     standalone: true,
     templateUrl: './admin-asignaturas.html',
     styleUrl: './admin-asignaturas.css',
@@ -25,6 +26,8 @@ export class AdminAsignaturas implements OnInit {
     public creditos: number = 0;
     public profesorId: number = 0;
     public aulaId: number = 0;
+    public activo: boolean = true;
+    
     public accionModal: string = 'Guardar';
 
     public modal: any;
@@ -100,16 +103,22 @@ export class AdminAsignaturas implements OnInit {
         this.creditos = asignatura.creditos;
         this.profesorId = asignatura.profesorId;
         this.aulaId = asignatura.aulaId;
+        this.activo = asignatura.activo;
         this.modal.show();
     }
 
-    inactivarAsignatura(id: number): void {
-        if (confirm('¿Desea inactivar esta asignatura?')) {
-        this.apiUniversidad.inactivarAsignatura(id).subscribe({
-            next: () => this.obtenerAsignaturas(),
-            error: (error) => console.log(error),
-        });
-        }
+    inactivarAsignatura(id: number): void { 
+        if (confirm('¿Desea inactivar esta asignatura?')) {         
+            this.apiUniversidad.inactivarAsignatura(id).subscribe({             
+                next: () => {
+                        this.asignaturas = [];
+                        this.obtenerAsignaturas();
+                        this.cdr.detectChanges();
+                    },      
+                error: (error) => 
+                    console.log(error),         
+            });         
+        }    
     }
 
     inicializarControles(): void {
@@ -118,5 +127,14 @@ export class AdminAsignaturas implements OnInit {
         this.creditos = 0;
         this.profesorId = 0;
         this.aulaId = 0;
+    }
+    obtenerNombreProfesor(profesorId: number): string {
+        const profesor = this.profesores.find(p => p.profesorId === profesorId);
+        return profesor ? `${profesor.nombre} ${profesor.apellido}` : 'Desconocido';
+    }
+
+    obtenerCodigoAula(aulaId: number): string {
+        const aula = this.aulas.find(a => a.aulaId === aulaId);
+        return aula ? aula.codigoAula : 'N/A';
     }
 }
