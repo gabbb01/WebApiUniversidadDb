@@ -4,15 +4,15 @@
 		<button class="btn btn-dark" (click)="abrirModalGuardar()">
 		<i class="bi bi-plus-lg"></i> Nueva Aula
 		</button>
-		<button routerLink="/" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Volver
+		<button routerLink="/" class="btn btn-dark">
+            <i class="bi bi-arrow-left"></i> Home
         </button>
 	</div>
 
 	<div class="row">
 		@for (aula of aulas; track aula.aulaId) {
 		<div class="col-md-4 col-sm-6 mb-4">
-		<div class="card shadow-sm h-100 border-0">
+		<div class="card shadow-sm h-100">
 			<div class="card-body text-center">
 			<div class="mb-3">
 				<i class="bi bi-building text-secondary" style="font-size: 2rem;"></i>
@@ -90,9 +90,9 @@
 			</form>
 		</div>
 		<div class="modal-footer bg-light">
-			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+			<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
 			<button type="button" class="btn btn-dark" (click)="guardarAula()">
-			<i class="bi bi-save me-1"></i> {{ accionModal }} Datos
+			<i class="bi bi-save me-1"></i> {{ accionModal }} aula
 			</button>
 		</div>
 		</div>

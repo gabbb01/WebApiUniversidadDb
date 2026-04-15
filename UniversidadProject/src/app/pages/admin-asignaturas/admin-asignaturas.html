@@ -1,15 +1,18 @@
 <div class="container mt-4">
 	<div class="d-flex justify-content-between align-items-center mb-4">
-		<h2 class="text-indigo text-primary"><i class="bi bi-book-half"></i> Gestión de Asignaturas</h2>
-		<button class="btn btn-primary shadow-sm" (click)="abrirModalGuardar()">
+		<h2 class="text-dark"><i class="bi bi-book-half"></i> Gestión de Asignaturas</h2>
+		<button class="btn btn-dark shadow-sm" (click)="abrirModalGuardar()">
 		<i class="bi bi-journal-plus"></i> Nueva Asignatura
 		</button>
+		<button routerLink="/" class="btn btn-dark">
+            <i class="bi bi-arrow-left"></i> Home
+        </button>
 	</div>
 
 	<div class="row">
 		@for (asignatura of asignaturas; track asignatura.asignaturaId) {
 		<div class="col-md-6 col-lg-4 mb-4">
-		<div class="card h-100 shadow-sm border-0">
+		<div class="card h-100 shadow-sm">
 			<div class="card-body">
 			<div class="d-flex justify-content-between align-items-start mb-2">
 				<h5 class="card-title fw-bold text-dark mb-0">{{ asignatura.nombre }}</h5>
@@ -20,15 +23,15 @@
 			
 			<p class="card-text mb-1">
 				<i class="bi bi-person-badge text-primary"></i> 
-				<strong>Profesor ID:</strong> {{ asignatura.profesorId }}
+				<strong>Profesor:</strong> {{ obtenerNombreProfesor(asignatura.profesorId) }}
 			</p>
 			<p class="card-text mb-1">
 				<i class="bi bi-geo-alt text-danger"></i> 
-				<strong>Aula ID:</strong> {{ asignatura.aulaId }}
+				<strong>Aula:</strong> {{ obtenerCodigoAula(asignatura.aulaId) }}
 			</p>
 			
 			<div class="mt-3">
-				<span class="badge" [ngClass]="asignatura.activo ? 'bg-success' : 'bg-secondary'">
+				<span class="badge" [ngClass]="asignatura.activo ? 'bg-success' : 'bg-danger'">
 				{{ asignatura.activo ? 'Activa' : 'Inactiva' }}
 				</span>
 			</div>
@@ -45,10 +48,9 @@
 		</div>
 		</div>
 		} @empty {
-		<div class="col-12 text-center py-5">
-		<div class="alert alert-light border shadow-sm">
-			<i class="bi bi-inbox fs-1 d-block mb-2"></i>
-			No hay asignaturas configuradas actualmente.
+		<div class="col-12">
+		<div class="alert alert-secondary text-center shadow-sm">
+			<i class="bi bi-info-circle me-2"></i> No hay asignaturas registradas en el sistema.
 		</div>
 		</div>
 		}
@@ -58,7 +60,7 @@
 	<div class="modal fade" id="modalAsignaturas" tabindex="-1" aria-labelledby="modalAsignaturasLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content border-0 shadow">
-		<div class="modal-header bg-primary text-white">
+		<div class="modal-header bg-dark text-white">
 			<h5 class="modal-title" id="modalAsignaturasLabel">
 			<i class="bi bi-journal-check me-2"></i>{{ accionModal }} Asignatura
 			</h5>
@@ -68,7 +70,7 @@
 			<form>
 			<div class="mb-3">
 				<label class="form-label fw-bold">Nombre de la Asignatura</label>
-				<input type="text" class="form-control" name="nombre" [(ngModel)]="nombre" placeholder="Ej: Programación III">
+				<input type="text" class="form-control" name="nombre" [(ngModel)]="nombre" placeholder="Ej: Programación II">
 			</div>
 
 			<div class="mb-3">
@@ -81,7 +83,7 @@
 				<select class="form-select" name="profesorId" [(ngModel)]="profesorId">
 				<option [value]="0" disabled selected>Seleccione un profesor...</option>
 				@for (p of profesores; track p.profesorId) {
-					<option [value]="p.profesorId">{{ p.nombre }} {{ p.apellido }}</option>
+					<option [value]="p.profesorId">{{ p.nombre }} {{ p.apellido }} (Especialidad: {{ p.especialidad }})</option>
 				}
 				</select>
 			</div>
@@ -95,11 +97,15 @@
 				}
 				</select>
 			</div>
+			<div class="mb-3">
+                <label class="form-label">Activo</label>
+                <input type="checkbox" class="form-check-input" name="activo" [(ngModel)]="activo">
+            </div>
 			</form>
 		</div>
 		<div class="modal-footer">
-			<button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-			<button type="button" class="btn btn-primary px-4" (click)="guardarAsignatura()">
+			<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
+			<button type="button" class="btn btn-dark" (click)="guardarAsignatura()">
 			{{ accionModal }} Asignatura
 			</button>
 		</div>
