@@ -3,12 +3,13 @@ import { ApiUniversidad } from '../../services/api-universidad';
 import { Aula } from '../../models/aula.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 declare var bootstrap: any;
 
 @Component({
 	selector: 'app-admin-aulas',
-	imports: [CommonModule, FormsModule],
+	imports: [CommonModule, FormsModule, RouterLink],
 	standalone: true,
 	templateUrl: './admin-aulas.html',
 	styleUrl: './admin-aulas.css',

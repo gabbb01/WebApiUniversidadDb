@@ -4,6 +4,9 @@
 		<button class="btn btn-dark" (click)="abrirModalGuardar()">
 		<i class="bi bi-plus-lg"></i> Nueva Aula
 		</button>
+		<button routerLink="/" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </button>
 	</div>
 
 	<div class="row">
@@ -70,7 +73,7 @@
 				<label class="form-label fw-bold">Código del Aula</label>
 				<div class="input-group">
 				<span class="input-group-text"><i class="bi bi-hash"></i></span>
-				<input type="text" class="form-control" name="codigoAula" [(ngModel)]="codigoAula" placeholder="Ej: A-101">
+				<input type="text" class="form-control" name="codigoAula" [(ngModel)]="codigoAula" placeholder="Ej: 101">
 				</div>
 			</div>
 			<div class="mb-3">
@@ -80,6 +83,10 @@
 				<input type="number" class="form-control" name="capacidad" [(ngModel)]="capacidad" min="1">
 				</div>
 			</div>
+			<div class="mb-3">
+                <label class="form-label">Activo</label>
+                <input type="checkbox" class="form-check-input" name="activo" [(ngModel)]="activo">
+            </div>
 			</form>
 		</div>
 		<div class="modal-footer bg-light">
