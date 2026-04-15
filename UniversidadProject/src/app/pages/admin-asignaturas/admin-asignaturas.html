@@ -1,13 +1,23 @@
-<div class="container mt-4">
-	<div class="d-flex justify-content-between align-items-center mb-4">
-		<h2 class="text-dark"><i class="bi bi-book-half"></i> Gestión de Asignaturas</h2>
-		<button class="btn btn-dark shadow-sm" (click)="abrirModalGuardar()">
-		<i class="bi bi-journal-plus"></i> Nueva Asignatura
-		</button>
-		<button routerLink="/" class="btn btn-dark">
-            <i class="bi bi-arrow-left"></i> Home
-        </button>
-	</div>
+<div class="container-fluid m-0 pt-4" style="background-color: #121212; min-height: 100vh;">
+	<div class="container">
+
+		<div class="d-flex justify-content-between align-items-center mb-4">
+		
+		<h2 class="text-light">
+			<i class="bi bi-book-half text-primary"></i> Gestión de Asignaturas
+		</h2>
+
+		<div class="d-flex gap-2">
+			<button class="btn btn-primary shadow-sm" (click)="abrirModalGuardar()">
+			<i class="bi bi-journal-plus"></i> Nueva Asignatura
+			</button>
+
+			<button routerLink="/" class="btn btn-outline-light">
+			<i class="bi bi-arrow-left"></i> Home
+			</button>
+		</div>
+
+    </div>
 
 	<div class="row">
 		@for (asignatura of asignaturas; track asignatura.asignaturaId) {

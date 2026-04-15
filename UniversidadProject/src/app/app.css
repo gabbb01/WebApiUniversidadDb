@@ -1,0 +1,14 @@
+/* En src/styles.css */
+html, body {
+    background-color: #121212 !important;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Esto quita cualquier borde residual del navbar de Bootstrap */
+.navbar {
+    border-bottom: none !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
+}

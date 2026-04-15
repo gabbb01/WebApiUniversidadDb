@@ -1,101 +1,129 @@
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-dark"><i class="bi bi-people-fill"></i> Gestión de Estudiantes</h2>
-        <button class="btn btn-dark" (click)="abrirModalGuardar()">
-        <i class="bi bi-person-plus-fill"></i> Nuevo Estudiante
-        </button>
-        <button routerLink="/" class="btn btn-dark">
-            <i class="bi bi-arrow-left"></i> Home
-        </button>
-    </div>
-    <div class="row">
-        @for (estudiante of estudiantes; track estudiante.estudianteId) {
-        <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card shadow-sm h-100">
-            <div class="card-header bg-white border-0 pt-3">
-            <div class="d-flex justify-content-between align-items-start">
-                <h5 class="card-title fw-bold mb-0">
-                {{ estudiante.nombre }} {{ estudiante.apellido }}
-                </h5>
-                <span class="badge" [ngClass]="estudiante.activo ? 'bg-success' : 'bg-danger'">
-                {{ estudiante.activo ? 'Activo' : 'Inactivo' }}
-                </span>
-            </div>
-            </div>
-
-            <div class="card-body">
-            <p class="card-text mb-1">
-                <i class="bi bi-card-heading"></i> <strong>No. Cuenta:</strong> {{ estudiante.numeroCuenta }}
-            </p>
-            <p class="card-text mb-1 text-truncate" title="{{ estudiante.correo }}">
-                <i class="bi bi-envelope"></i> <strong>Correo:</strong> {{ estudiante.correo }}
-            </p>
-            <p class="card-text">
-                <small class="text-muted">
-                <i class="bi bi-calendar3"></i> Registrado: {{ estudiante.fechaCreacion | date:'dd/MM/yyyy' }}
-                </small>
-            </p>
-            </div>
-
-            <div class="card-footer bg-light border-0 d-flex justify-content-between">
-            <button class="btn btn-outline-primary btn-sm w-100 me-2" (click)="cargarParaActualizar(estudiante)">
-                <i class="bi bi-pencil"></i> Editar
-            </button>
-            <button class="btn btn-outline-danger btn-sm w-100" (click)="inactivarEstudiante(estudiante.estudianteId)">
-                <i class="bi bi-person-x"></i> Inactivar
-            </button>
+<div class="container-fluid m-0 pt-4" style="background-color: #121212; min-height: 100vh;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-light"><i class="bi bi-people text-primary"></i> Gestión de Estudiantes</h2>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary shadow-sm" (click)="abrirModalGuardar()">
+                    <i class="bi bi-plus-circle"></i> Nuevo Estudiante
+                </button>
+                <button routerLink="/" class="btn btn-outline-light">
+                    <i class="bi bi-arrow-left"></i> Home
+                </button>
             </div>
         </div>
-        </div>
-        } @empty {
-        <div class="col-12">
-		<div class="alert alert-secondary text-center shadow-sm">
-			<i class="bi bi-info-circle me-2"></i> No hay estudiantes registrados en el sistema.
-		</div>
-		</div>
-        }
-    </div>
-    </div>
 
-    <div class="modal fade" id="modalEstudiantes" tabindex="-1" aria-labelledby="modalEstudiantesLabel" aria-hidden="true">
-    <div class="modal-dialog">
+        <div class="row">
+            @for (estudiante of estudiantes; track estudiante.estudianteId) {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                                <i class="bi bi-person-vcard fs-3 text-primary"></i>
+                            </div>
+                            <h5 class="card-title fw-bold mb-0 text-light">
+                                {{ estudiante.nombre }} {{ estudiante.apellido }}
+                            </h5>
+                        </div>
+
+                        <p class="card-text mb-2">
+                            <i class="bi bi-card-heading text-primary me-2"></i> 
+                            <strong class="text-light-emphasis">No. Cuenta: </strong> 
+                            <span class="text-light">{{ estudiante.numeroCuenta }}</span>
+                        </p>
+
+                        <p class="card-text mb-2 text-truncate" title="{{ estudiante.correo }}">
+                            <i class="bi bi-envelope text-info me-2"></i> 
+                            <strong class="text-light-emphasis">Correo: </strong> 
+                            <span class="text-light">{{ estudiante.correo }}</span>
+                        </p>
+
+                        <p class="card-text mb-2">
+                            <i class="bi bi-activity text-warning me-2"></i> 
+                            <strong class="text-light-emphasis">Estado: </strong>
+                            <span class="badge rounded-pill ms-1" [ngClass]="estudiante.activo ? 'bg-success text-light' : 'bg-danger text-light'">
+                                {{ estudiante.activo ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </p>
+
+                        <p class="card-text mt-3">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-check me-1"></i> Registrado: {{ estudiante.fechaCreacion | date:'dd/MM/yyyy' }}
+                            </small>
+                        </p>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent border-0 d-flex justify-content-between pb-4 gap-2">
+                        <button class="btn btn-outline-primary btn-sm flex-fill" (click)="cargarParaActualizar(estudiante)">
+                            <i class="bi bi-pencil"></i> Editar
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm flex-fill" (click)="inactivarEstudiante(estudiante.estudianteId)">
+                            <i class="bi bi-person-x"></i> Inactivar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            } @empty {
+            <div class="col-12">
+                <div class="alert alert-secondary text-center shadow-sm border-0 py-5">
+                    <i class="bi bi-info-circle fs-2 d-block mb-2"></i> No hay estudiantes registrados en el sistema.
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEstudiantes" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-        <div class="modal-header bg-dark text-white">
-            <h5 class="modal-title" id="modalEstudiantesLabel">{{ accionModal }} Estudiante</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form>
-            <div class="mb-3">
-                <label class="form-label fw-bold">Número de Cuenta</label>
-                <input type="text" class="form-control" name="numeroCuenta" [(ngModel)]="numeroCuenta" placeholder="Ej: 20241001105">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light">
+                    <i class="bi bi-person-gear text-primary me-2"></i>{{ accionModal }} Estudiante
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                <label class="form-label fw-bold">Nombre</label>
-                <input type="text" class="form-control" name="nombre" [(ngModel)]="nombre">
-                </div>
-                <div class="col-md-6 mb-3">
-                <label class="form-label fw-bold">Apellido</label>
-                <input type="text" class="form-control" name="apellido" [(ngModel)]="apellido">
-                </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-light">Número de Cuenta</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-hash"></i></span>
+                            <input type="text" class="form-control" name="numeroCuenta" [(ngModel)]="numeroCuenta" placeholder="Ej: 20241001105">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-light">Nombre</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-light"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" name="nombre" [(ngModel)]="nombre">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-light">Apellido</label>
+                            <input type="text" class="form-control" name="apellido" [(ngModel)]="apellido">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-light">Correo Electrónico</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-info"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" name="correo" [(ngModel)]="correo" placeholder="usuario@unah.hn">
+                        </div>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input type="checkbox" class="form-check-input" id="activoEstudiante" name="activo" [(ngModel)]="activo">
+                        <label class="form-check-label text-light" for="activoEstudiante">Estado Activo</label>
+                    </div>
+                </form>
             </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold">Correo Electrónico</label>
-                <input type="email" class="form-control" name="correo" [(ngModel)]="correo" placeholder="usuario@unah.hn">
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" (click)="guardarEstudiante()">
+                    <i class="bi bi-save me-1"></i> {{ accionModal }}
+                </button>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Activo</label>
-                <input type="checkbox" class="form-check-input" name="activo" [(ngModel)]="activo">
-            </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-dark" (click)="guardarEstudiante()">
-            {{ accionModal }} Cambios
-            </button>
-        </div>
         </div>
     </div>
 </div>

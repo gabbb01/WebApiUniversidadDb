@@ -1,96 +1,116 @@
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Gestión de Profesores</h2>
-        <button class="btn btn-dark" (click)="abrirModalGuardar()">
-        <i class="bi bi-plus-circle"></i> Nuevo Profesor
-        </button>
-        <button routerLink="/" class="btn btn-dark">
-            <i class="bi bi-arrow-left"></i> Home
-        </button>
-    </div>
-
-    <div class="row">
-        @for (profesor of profesores; track profesor.profesorId) {
-        <div class="col-md-4 mb-4">
-        <div class="card shadow-sm h-100">
-            <div class="card-body">
-            <h5 class="card-title">
-                {{ profesor.nombre }} {{ profesor.apellido }}
-            </h5>
-
-            <p class="card-text mb-1">
-                <strong>Especialidad:</strong> {{ profesor.especialidad }}
-            </p>
-
-            <p class="card-text mb-1">
-                <strong>Estado:</strong>
-                <span 
-                class="badge"
-                [ngClass]="profesor.activo ? 'bg-success' : 'bg-danger'">
-                {{ profesor.activo ? 'Activo' : 'Inactivo' }}
-                </span>
-            </p>
-
-            <p class="card-text">
-                <small class="text-muted">
-                Creado: {{ profesor.fechaCreacion | date:'short' }}
-                </small>
-            </p>
-            </div>
-            
-            <div class="card-footer bg-light border-0 d-flex justify-content-between">
-            <button class="btn btn-outline-primary btn-sm w-100 me-2" (click)="cargarParaActualizar(profesor)">
-                <i class="bi bi-pencil"></i> Editar
-            </button>
-            <button class="btn btn-outline-danger btn-sm w-100" (click)="inactivarProfesor(profesor.profesorId)">
-                <i class="bi bi-person-x"></i> Inactivar
-            </button>
+<div class="container-fluid m-0 pt-4" style="background-color: #121212; min-height: 100vh;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-light"><i class="bi bi-person-workspace text-primary"></i> Gestión de Profesores</h2>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary shadow-sm" (click)="abrirModalGuardar()">
+                    <i class="bi bi-plus-circle"></i> Nuevo Profesor
+                </button>
+                <button routerLink="/" class="btn btn-outline-light">
+                    <i class="bi bi-arrow-left"></i> Home
+                </button>
             </div>
         </div>
-        </div>
-        } @empty {
-        <div class="col-12">
-		<div class="alert alert-secondary text-center shadow-sm">
-			<i class="bi bi-info-circle me-2"></i> No hay profesores registrados en el sistema.
-		</div>
-		</div>
-        }
-    </div>
-    </div>
 
-    <div class="modal fade" id="modalProfesores" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+        <div class="row">
+            @for (profesor of profesores; track profesor.profesorId) {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                                <i class="bi bi-person-badge fs-3 text-primary"></i>
+                            </div>
+                            <h5 class="card-title fw-bold mb-0 text-light">
+                                {{ profesor.nombre }} {{ profesor.apellido }}
+                            </h5>
+                        </div>
+
+                        <p class="card-text mb-2">
+                            <i class="bi bi-mortarboard text-info me-2"></i> 
+                            <strong class="text-light-emphasis">Especialidad: </strong> 
+                            <span class="text-light">{{ profesor.especialidad }}</span>
+                        </p>
+
+                        <p class="card-text mb-2">
+                            <i class="bi bi-activity text-warning me-2"></i> 
+                            <strong class="text-light-emphasis">Estado: </strong>
+                            <span class="badge rounded-pill ms-1" [ngClass]="profesor.activo ? 'bg-success text-light' : 'bg-danger text-light'">
+                                {{ profesor.activo ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </p>
+
+                        <p class="card-text mt-3">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-check me-1"></i> Registrado: {{ profesor.fechaCreacion | date:'dd/MM/yyyy' }}
+                            </small>
+                        </p>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent border-0 d-flex justify-content-between pb-4 gap-2">
+                        <button class="btn btn-outline-primary btn-sm flex-fill" (click)="cargarParaActualizar(profesor)">
+                            <i class="bi bi-pencil"></i> Editar
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm flex-fill" (click)="inactivarProfesor(profesor.profesorId)">
+                            <i class="bi bi-person-x"></i> Inactivar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            } @empty {
+            <div class="col-12">
+                <div class="alert alert-secondary text-center shadow-sm border-0 py-5">
+                    <i class="bi bi-info-circle fs-2 d-block mb-2"></i> No hay profesores registrados en el sistema.
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalProfesores" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-        <div class="modal-header bg-dark text-white">
-            <h5 class="modal-title">{{ accionModal }} Profesor</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form>
-            <div class="mb-3">
-                <label class="form-label">Nombre</label>
-                <input type="text" class="form-control" name="nombre" [(ngModel)]="nombre">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light">
+                    <i class="bi bi-person-gear text-primary me-2"></i>{{ accionModal }} Profesor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Apellido</label>
-                <input type="text" class="form-control" name="apellido" [(ngModel)]="apellido">
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-light">Nombre</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-light"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" name="nombre" [(ngModel)]="nombre">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-light">Apellido</label>
+                            <input type="text" class="form-control" name="apellido" [(ngModel)]="apellido">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-light">Especialidad</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-info"><i class="bi bi-award"></i></span>
+                            <input type="text" class="form-control" name="especialidad" [(ngModel)]="especialidad" placeholder="Ej: Programación" style="color: white;">
+                        </div>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input type="checkbox" class="form-check-input" id="activoProfesor" name="activo" [(ngModel)]="activo">
+                        <label class="form-check-label text-light" for="activoProfesor">Estado Activo</label>
+                    </div>
+                </form>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Especialidad</label>
-                <input type="text" class="form-control" name="especialidad" [(ngModel)]="especialidad" placeholder="Ej: Ingles">
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" (click)="guardarProfesor()">
+                    <i class="bi bi-save me-1"></i> {{ accionModal }}
+                </button>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Activo</label>
-                <input type="checkbox" class="form-check-input" name="activo" [(ngModel)]="activo">
-            </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-dark" (click)="guardarProfesor()">
-            {{ accionModal }}
-            </button>
-        </div>
         </div>
     </div>
 </div>

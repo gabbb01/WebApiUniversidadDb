@@ -1,0 +1,63 @@
+/* Contenedor principal y fondo de la página */
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #121212; /* Fondo oscuro profundo */
+    padding-top: 50px;
+}
+
+.container {
+    max-width: 900px;
+}
+
+/* Estilo de las tarjetas en modo oscuro */
+.card {
+    background-color: #1e1e1e !important; /* Gris oscuro para la tarjeta */
+    border: 1px solid #333 !important; /* Borde sutil */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    border-radius: 16px !important;
+}
+
+/* Títulos y textos */
+.card-title {
+    color: #ffffff !important; /* Blanco puro para resaltar */
+    font-weight: 700;
+}
+
+.card-text {
+    color: #b0b0b0 !important; /* Gris claro para lectura suave */
+}
+
+/* Efecto Hover (Interacción) */
+.card:hover {
+    transform: translateY(-8px);
+    background-color: #252525 !important; /* Se aclara un poco al pasar el mouse */
+    border-color: #0d6efd !important; /* Color azul de acento (Bootstrap primary) */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Ajuste para los botones de Bootstrap que estás usando como clases */
+.btn-outline-light.text-dark {
+    color: #fff !important; /* Forzamos el texto a blanco */
+}
+
+.btn-outline-light:hover {
+    background-color: transparent !important; /* Evitamos el fondo blanco de Bootstrap */
+}
+/* Tamaño y margen del icono */
+.bi {
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+/* Animación extra: el icono crece un poco cuando pasas el mouse por la tarjeta */
+.card:hover .bi {
+    transform: scale(1.2);
+}
+
+/* Clases de utilidad de tamaño de Bootstrap (fs-1) suelen ser suficientes, 
+   pero puedes personalizarlos aquí */
+.fs-1 {
+    font-size: 3rem !important;
+}
