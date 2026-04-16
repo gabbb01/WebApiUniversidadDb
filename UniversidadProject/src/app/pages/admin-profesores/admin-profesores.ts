@@ -4,6 +4,7 @@ import { Profesor } from '../../models/profesor.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import Swal from 'sweetalert2';
     
     declare var bootstrap: any;
     
@@ -65,7 +66,14 @@ export class AdminProfesores implements OnInit {
     agregarProfesor(): void {
         const profesor = new Profesor(0, this.nombre, this.apellido, this.especialidad, true, new Date());
         this.apiUniversidad.agregarProfesor(profesor).subscribe({
-        next: () => { this.obtenerProfesores(); this.modal.hide(); },
+        next: () => { 
+            this.obtenerProfesores(); 
+            this.modal.hide(); 
+            Swal.fire({
+                title: "Profesor agregado exitosamente",
+                icon: "success",
+            });
+        },
         error: (error) => console.log(error),
         });
     }
@@ -73,7 +81,14 @@ export class AdminProfesores implements OnInit {
     actualizarProfesor(): void {
         const profesor = new Profesor(this.profesorId, this.nombre, this.apellido, this.especialidad, true, new Date());
         this.apiUniversidad.actualizarProfesor(profesor).subscribe({
-        next: () => { this.obtenerProfesores(); this.modal.hide(); },
+        next: () => { 
+            this.obtenerProfesores(); 
+            this.modal.hide(); 
+            Swal.fire({
+                title: "Profesor actualizado exitosamente",
+                icon: "success",
+            });
+        },
         error: (error) => console.log(error),
         });
     }
@@ -89,13 +104,39 @@ export class AdminProfesores implements OnInit {
     }
     
     inactivarProfesor(id: number): void {
-        if (confirm('¿Desea inactivar este profesor?')) {
-        this.apiUniversidad.inactivarProfesor(id).subscribe({
-            next: () => this.obtenerProfesores(),
-            error: (error) => console.log(error),
-        });
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "El profesor será marcado como inactivo.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, inactivar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            this.apiUniversidad.inactivarProfesor(id).subscribe({
+                next: () => {
+                    this.obtenerProfesores();
+                    Swal.fire({
+                        title: "¡Inactivado!",
+                        text: "El profesor ha sido inactivado correctamente.",
+                        icon: "success",
+                    });
+                },
+                error: (error) => {
+                    console.error(error);
+                    Swal.fire({
+                        title: "Error",
+                        text: "No se pudo inactivar al profesor.",
+                        icon: "error",
+                    });
+                },
+            });
         }
-    }
+    });
+}
     
     inicializarControles(): void {
         this.profesorId = 0;

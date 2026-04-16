@@ -4,7 +4,7 @@ import { Aula } from '../../models/aula.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
+import Swal from 'sweetalert2';
 declare var bootstrap: any;
 
 @Component({
@@ -61,7 +61,14 @@ export class AdminAulas implements OnInit {
 	agregarAula(): void {
 		const aula = new Aula(0, this.codigoAula, this.capacidad, true, new Date());
 		this.apiUniversidad.agregarAula(aula).subscribe({
-			next: () => { this.obtenerAulas(); this.modal.hide(); },
+			next: () => { 
+				this.obtenerAulas(); 
+				this.modal.hide(); 
+				Swal.fire({
+					title: "¡Aula agregada exitosamente!",
+					icon: "success",
+				});
+			},
 			error: (error) => console.log(error),
 		});
 	}
@@ -69,7 +76,14 @@ export class AdminAulas implements OnInit {
 	actualizarAula(): void {
 		const aula = new Aula(this.aulaId, this.codigoAula, this.capacidad, true, new Date());
 		this.apiUniversidad.actualizarAula(aula).subscribe({
-			next: () => { this.obtenerAulas(); this.modal.hide(); },
+			next: () => { 
+				this.obtenerAulas(); 
+				this.modal.hide(); 
+				Swal.fire({
+					title: "¡Aula actualizada exitosamente!",
+					icon: "success",
+				});
+			},
 			error: (error) => console.log(error),
 		});
 	}
@@ -83,14 +97,40 @@ export class AdminAulas implements OnInit {
 		this.modal.show();
 	}
 
-	inactivarAula(id: number): void {
-		if (confirm('¿Desea inactivar esta aula?')) {
-			this.apiUniversidad.inactivarAula(id).subscribe({
-				next: () => this.obtenerAulas(),
-				error: (error) => console.log(error),
-			});
-		}
-	}
+inactivarAula(id: number): void {
+    Swal.fire({
+        title: '¿Inactivar aula?',
+        text: "Asegúrate de que no haya clases programadas en este salón.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, inactivar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            this.apiUniversidad.inactivarAula(id).subscribe({
+                next: () => {
+                    this.obtenerAulas();
+                    Swal.fire({
+                        title: "Aula actualizada",
+                        text: "El estado del aula ha cambiado a inactivo.",
+                        icon: "success",
+                    });
+                },
+                error: (error) => {
+                    console.error(error);
+                    Swal.fire({
+                        title: "Error",
+                        text: "No se pudo actualizar el estado del aula.",
+                        icon: "error",
+                    });
+                },
+            });
+        }
+    });
+}
 
 	inicializarControles(): void {
 		this.aulaId = 0;

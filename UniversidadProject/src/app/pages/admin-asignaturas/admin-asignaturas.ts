@@ -6,7 +6,7 @@ import { Aula } from '../../models/aula.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
+import Swal from 'sweetalert2';
 declare var bootstrap: any;
 
 @Component({
@@ -83,7 +83,14 @@ export class AdminAsignaturas implements OnInit {
     agregarAsignatura(): void {
         const asignatura = new Asignatura(0, this.nombre, this.creditos, this.profesorId, this.aulaId, true, new Date());
         this.apiUniversidad.agregarAsignatura(asignatura).subscribe({
-        next: () => { this.obtenerAsignaturas(); this.modal.hide(); },
+        next: () => { 
+            this.obtenerAsignaturas(); 
+            this.modal.hide(); 
+            Swal.fire({
+                title: "¡Asignatura agregada exitosamente!",
+                icon: "success",
+            });
+        },
         error: (error) => console.log(error),
         });
     }
@@ -91,7 +98,14 @@ export class AdminAsignaturas implements OnInit {
     actualizarAsignatura(): void {
         const asignatura = new Asignatura(this.asignaturaId, this.nombre, this.creditos, this.profesorId, this.aulaId, true, new Date());
         this.apiUniversidad.actualizarAsignatura(asignatura).subscribe({
-        next: () => { this.obtenerAsignaturas(); this.modal.hide(); },
+        next: () => { 
+            this.obtenerAsignaturas(); 
+            this.modal.hide(); 
+            Swal.fire({
+                title: "¡Asignatura actualizada exitosamente!",
+                icon: "success",
+            });
+        },
         error: (error) => console.log(error),
         });
     }
@@ -107,19 +121,45 @@ export class AdminAsignaturas implements OnInit {
         this.modal.show();
     }
 
-    inactivarAsignatura(id: number): void { 
-        if (confirm('¿Desea inactivar esta asignatura?')) {         
-            this.apiUniversidad.inactivarAsignatura(id).subscribe({             
+inactivarAsignatura(id: number): void {
+    Swal.fire({
+        title: '¿Inactivar asignatura?',
+        text: "Esta acción podría afectar a los grupos que tienen esta materia asignada.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, inactivar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            this.apiUniversidad.inactivarAsignatura(id).subscribe({
                 next: () => {
-                        this.asignaturas = [];
-                        this.obtenerAsignaturas();
-                        this.cdr.detectChanges();
-                    },      
-                error: (error) => 
-                    console.log(error),         
-            });         
-        }    
-    }
+                    // Mantenemos tu lógica de limpieza y refresco
+                    this.asignaturas = [];
+                    this.obtenerAsignaturas();
+                    this.cdr.detectChanges();
+
+                    Swal.fire({
+                        title: "¡Asignatura Inactivada!",
+                        text: "La materia se ha actualizado correctamente.",
+                        icon: "success",
+                    });
+                },
+                error: (error) => {
+                    console.error(error);
+                    Swal.fire({
+                        title: "Error",
+                        text: "No se pudo inactivar la asignatura.",
+                        icon: "error",
+                    });
+                },
+            });
+
+        }
+    });
+}
 
     inicializarControles(): void {
         this.asignaturaId = 0;
