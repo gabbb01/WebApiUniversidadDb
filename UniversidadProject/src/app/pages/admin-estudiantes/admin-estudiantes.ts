@@ -4,7 +4,7 @@ import { Estudiante } from '../../models/estudiante.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
+import Swal from 'sweetalert2';
 declare var bootstrap: any;
 
 @Component({
@@ -63,7 +63,14 @@ export class AdminEstudiantes implements OnInit {
     agregarEstudiante(): void {
         const estudiante = new Estudiante(0, this.numeroCuenta, this.nombre, this.apellido, this.correo, true, new Date());
         this.apiUniversidad.agregarEstudiante(estudiante).subscribe({
-            next: () => { this.obtenerEstudiantes(); this.modal.hide(); },
+            next: () => { 
+                this.obtenerEstudiantes(); 
+                this.modal.hide(); 
+                Swal.fire({
+                    title: "¡Estudiante agregado exitosamente!",
+                    icon: "success",
+                });
+            },
             error: (error) => console.log(error),
         });
     }
@@ -71,7 +78,14 @@ export class AdminEstudiantes implements OnInit {
     actualizarEstudiante(): void {
         const estudiante = new Estudiante(this.estudianteId, this.numeroCuenta, this.nombre, this.apellido, this.correo, true, new Date());
         this.apiUniversidad.actualizarEstudiante(estudiante).subscribe({
-            next: () => { this.obtenerEstudiantes(); this.modal.hide(); },
+            next: () => { 
+                this.obtenerEstudiantes(); 
+                this.modal.hide(); 
+                Swal.fire({
+                    title: "¡Estudiante actualizado exitosamente!",
+                    icon: "success",
+                });
+            },
             error: (error) => console.log(error),
         });
     }
@@ -87,14 +101,40 @@ export class AdminEstudiantes implements OnInit {
         this.modal.show();
     }
 
-    inactivarEstudiante(id: number): void {
-        if (confirm('�Desea inactivar este estudiante?')) {
+inactivarEstudiante(id: number): void {
+    Swal.fire({
+        title: '¿Confirmar inactivación?',
+        text: "El estudiante ya no aparecerá en las listas activas.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, inactivar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
             this.apiUniversidad.inactivarEstudiante(id).subscribe({
-                next: () => this.obtenerEstudiantes(),
-                error: (error) => console.log(error),
+                next: () => {
+                    this.obtenerEstudiantes();
+                    Swal.fire({
+                        title: "¡Logrado!",
+                        text: "Estudiante inactivado exitosamente.",
+                        icon: "success",
+                    });
+                },
+                error: (error) => {
+                    console.error(error);
+                    Swal.fire({
+                        title: "Error",
+                        text: "Hubo un problema al procesar la solicitud.",
+                        icon: "error",
+                    });
+                },
             });
         }
-    }
+    });
+}
 
     inicializarControles(): void {
         this.estudianteId = 0;
