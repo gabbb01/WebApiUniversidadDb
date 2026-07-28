@@ -1,0 +1,177 @@
+<section class="admin-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="page-title">Matrículas</h1>
+        <p class="page-subtitle">Gestión de inscripciones por estudiante y asignatura</p>
+      </div>
+    </div>
+    <div class="stats-badges">
+      <span class="badge-stat">
+        <span class="badge-num">{{ matriculas.length }}</span>
+        <span class="badge-label">Total</span>
+      </span>
+      <span class="badge-stat aprobados">
+        <span class="badge-num">{{ totalAprobados }}</span>
+        <span class="badge-label">Aprobados</span>
+      </span>
+      <span class="badge-stat pendientes">
+        <span class="badge-num">{{ totalPendientes }}</span>
+        <span class="badge-label">Pendientes</span>
+      </span>
+      <span class="badge-stat reprobados">
+        <span class="badge-num">{{ totalReprobados }}</span>
+        <span class="badge-label">Reprobados</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- FORMULARIO NUEVA MATRÍCULA -->
+  <div class="form-card">
+    <h2 class="form-title">
+      <span class="form-icon">📋</span>
+      Nueva Matrícula
+    </h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Estudiante *</label>
+        <select class="form-input" [(ngModel)]="nuevaMatricula.estudianteId">
+          <option [value]="0" disabled>— Seleccionar Estudiante —</option>
+          <option *ngFor="let e of estudiantes" [value]="e.estudianteId">
+            {{ e.nombre }} {{ e.apellido }} — {{ e.numeroCuenta }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Asignatura *</label>
+        <select class="form-input" [(ngModel)]="nuevaMatricula.asignaturaId">
+          <option [value]="0" disabled>— Seleccionar Asignatura —</option>
+          <option *ngFor="let a of asignaturas" [value]="a.asignaturaId">
+            {{ a.nombre }} ({{ a.creditos }} créditos)
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-primary" (click)="agregarMatricula()">
+        <span>✚</span> Registrar Matrícula
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLA DE MATRÍCULAS -->
+  <div class="table-card">
+    <div class="table-header">
+      <h2 class="table-title">Matrículas Registradas</h2>
+      <div *ngIf="cargando" class="loading-spinner">Cargando...</div>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Estudiante</th>
+            <th>Asignatura</th>
+            <th>Créditos</th>
+            <th>Nota</th>
+            <th>Resultado</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of matriculas; let i = index" class="table-row">
+            <td class="td-index">{{ i + 1 }}</td>
+
+            <!-- Estudiante -->
+            <td class="td-name">
+              <div class="name-cell">
+                <div class="avatar">{{ (m.nombreEstudiante || '?')[0] }}</div>
+                <div>
+                  <div class="name-main">{{ m.nombreEstudiante }} {{ m.apellidoEstudiante }}</div>
+                </div>
+              </div>
+            </td>
+
+            <td class="td-subject">{{ m.nombreAsignatura }}</td>
+            <td class="td-credits">
+              <span class="credits-badge">{{ m.creditosAsignatura }} cr</span>
+            </td>
+
+            <!-- Nota: modo edición inline -->
+            <td class="td-nota">
+              <div *ngIf="editandoNotaId === m.matriculaId; else notaBadge" class="nota-editor">
+                <input
+                  type="number" min="0" max="100" step="0.5"
+                  class="nota-input"
+                  [(ngModel)]="notaTemp"
+                  (keydown.enter)="guardarNota(m.matriculaId)"
+                  (keydown.escape)="cancelarEdicionNota()"
+                  autofocus
+                />
+              </div>
+              <ng-template #notaBadge>
+                <span [class]="'nota-badge ' + getNotaClass(+m.nota)">
+                  {{ +m.nota === 0 ? '—' : m.nota }}
+                </span>
+              </ng-template>
+            </td>
+
+            <!-- Letra -->
+            <td class="td-letra">
+              <span *ngIf="editandoNotaId !== m.matriculaId"
+                    [class]="'letra-badge ' + getNotaClass(+m.nota)">
+                {{ getNotaLabel(+m.nota) }}
+              </span>
+            </td>
+
+            <td class="td-status">
+              <span class="status-badge active">Activo</span>
+            </td>
+            <td class="td-date">{{ m.fechaCreacion | date: 'dd/MM/yyyy' }}</td>
+
+            <!-- Acciones -->
+            <td class="td-actions">
+              <!-- Modo normal: botón editar nota + eliminar -->
+              <ng-container *ngIf="editandoNotaId !== m.matriculaId">
+                <button class="btn-edit" (click)="abrirEdicionNota(m)" title="Asignar nota">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                </button>
+                <button class="btn-danger" (click)="inactivarMatricula(m.matriculaId)" title="Eliminar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/>
+                  </svg>
+                </button>
+              </ng-container>
+
+              <!-- Modo edición: guardar + cancelar -->
+              <ng-container *ngIf="editandoNotaId === m.matriculaId">
+                <button class="btn-save" (click)="guardarNota(m.matriculaId)" title="Guardar nota">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </button>
+                <button class="btn-cancel" (click)="cancelarEdicionNota()" title="Cancelar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </ng-container>
+            </td>
+          </tr>
+          <tr *ngIf="matriculas.length === 0 && !cargando">
+            <td colspan="9" class="empty-row">No hay matrículas registradas. Agrega la primera.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

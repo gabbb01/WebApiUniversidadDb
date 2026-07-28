@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { ApiUniversidad } from '../../services/api-universidad';
 import { Asignatura } from '../../models/asignatura.model';
 import { Profesor } from '../../models/profesor.model';
@@ -32,7 +32,7 @@ export class AdminAsignaturas implements OnInit {
 
     public modal: any;
 
-    constructor(private apiUniversidad: ApiUniversidad, private cdr: ChangeDetectorRef) {}
+    constructor(private apiUniversidad: ApiUniversidad, private cdr: ChangeDetectorRef, private zone: NgZone) {}
 
     ngOnInit(): void {
         this.obtenerAsignaturas();
@@ -127,36 +127,36 @@ inactivarAsignatura(id: number): void {
         text: "Esta acción podría afectar a los grupos que tienen esta materia asignada.",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, inactivar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-
-            this.apiUniversidad.inactivarAsignatura(id).subscribe({
-                next: () => {
-                    // Mantenemos tu lógica de limpieza y refresco
-                    this.asignaturas = [];
-                    this.obtenerAsignaturas();
-                    this.cdr.detectChanges();
-
-                    Swal.fire({
-                        title: "¡Asignatura Inactivada!",
-                        text: "La materia se ha actualizado correctamente.",
-                        icon: "success",
-                    });
-                },
-                error: (error) => {
-                    console.error(error);
-                    Swal.fire({
-                        title: "Error",
-                        text: "No se pudo inactivar la asignatura.",
-                        icon: "error",
-                    });
-                },
+            this.zone.run(() => {
+                this.apiUniversidad.inactivarAsignatura(id).subscribe({
+                    next: () => {
+                        this.apiUniversidad.obtenerAsignaturas().subscribe({
+                            next: (data) => {
+                                this.asignaturas = data;
+                                this.cdr.detectChanges();
+                                Swal.fire({
+                                    title: "¡Asignatura Inactivada!",
+                                    text: "La materia se ha actualizado correctamente.",
+                                    icon: "success",
+                                });
+                            },
+                            error: () => this.obtenerAsignaturas()
+                        });
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se pudo inactivar la asignatura.",
+                            icon: "error",
+                        });
+                    },
+                });
             });
-
         }
     });
 }

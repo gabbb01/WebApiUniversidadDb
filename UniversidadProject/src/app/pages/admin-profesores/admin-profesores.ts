@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { ApiUniversidad } from '../../services/api-universidad';
 import { Profesor } from '../../models/profesor.model';
 import { CommonModule } from '@angular/common';
@@ -28,7 +28,7 @@ export class AdminProfesores implements OnInit {
     
     public modal: any;
     
-    constructor(private apiUniversidad: ApiUniversidad, private cdr: ChangeDetectorRef) {}
+    constructor(private apiUniversidad: ApiUniversidad, private cdr: ChangeDetectorRef, private zone: NgZone) {}
     
     ngOnInit(): void {
         this.obtenerProfesores();
@@ -109,30 +109,35 @@ export class AdminProfesores implements OnInit {
         text: "El profesor será marcado como inactivo.",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, inactivar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            
-            this.apiUniversidad.inactivarProfesor(id).subscribe({
-                next: () => {
-                    this.obtenerProfesores();
-                    Swal.fire({
-                        title: "¡Inactivado!",
-                        text: "El profesor ha sido inactivado correctamente.",
-                        icon: "success",
-                    });
-                },
-                error: (error) => {
-                    console.error(error);
-                    Swal.fire({
-                        title: "Error",
-                        text: "No se pudo inactivar al profesor.",
-                        icon: "error",
-                    });
-                },
+            this.zone.run(() => {
+                this.apiUniversidad.inactivarProfesor(id).subscribe({
+                    next: () => {
+                        this.apiUniversidad.obtenerProfesores().subscribe({
+                            next: (data) => {
+                                this.profesores = data;
+                                this.cdr.detectChanges();
+                                Swal.fire({
+                                    title: "¡Inactivado!",
+                                    text: "El profesor ha sido inactivado correctamente.",
+                                    icon: "success",
+                                });
+                            },
+                            error: () => this.obtenerProfesores()
+                        });
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se pudo inactivar al profesor.",
+                            icon: "error",
+                        });
+                    },
+                });
             });
         }
     });

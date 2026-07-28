@@ -1,4 +1,5 @@
-﻿using WebApiUniversidadDb.Commons.Models;
+using WebApiUniversidadDb.Commons.Functional;
+using WebApiUniversidadDb.Commons.Models;
 using WebApiUniversidadDb.Entities;
 
 namespace WebApiUniversidadDb.Features.Universidad.DomainServices
@@ -9,42 +10,20 @@ namespace WebApiUniversidadDb.Features.Universidad.DomainServices
         {
             
         }
-        public ApiResponse<Aula> AgregarAula(Aula aula)
-        {
-            ApiResponse<Aula> apiResponse = new ApiResponse<Aula>();
-            apiResponse.Success = true;
-            if (string.IsNullOrEmpty(aula.CodigoAula))
-            {
-                apiResponse.Success = false;
-                apiResponse.Message = "El codigo del aula no puede estar vacio";
-            }
-            if (int.IsNegative(aula.Capacidad))
-            {
-                apiResponse.Success = false;
-                apiResponse.Message = "La capacidad no puede ser negativa";
-            }
-            
-            apiResponse.Data = aula;
-            return apiResponse;
 
-        }
-        public ApiResponse<Aula> ActualizarAula(Aula aula)
-        {
-            ApiResponse<Aula> apiResponse = new ApiResponse<Aula>();
-            apiResponse.Success = true;
-            if (string.IsNullOrEmpty(aula.CodigoAula))
-            {
-                apiResponse.Success = false;
-                apiResponse.Message = "El codigo del aula no puede estar vacio";
-            }
-            if (int.IsNegative(aula.Capacidad))
-            {
-                apiResponse.Success = false;
-                apiResponse.Message = "La capacidad no puede ser negativa";
-            }
+        // PARADIGMA FUNCIONAL: Composición de funciones puras como reglas de validación
+        // Expression-bodied member — retorno directo de la composición funcional
+        public ApiResponse<Aula> AgregarAula(Aula aula) =>
+            ValidationHelper.Validar(aula,
+                a => ValidationHelper.NoVacio("código del aula")(a.CodigoAula),
+                a => ValidationHelper.NoNegativo("capacidad")(a.Capacidad)
+            );
 
-            apiResponse.Data = aula;
-            return apiResponse;
-        }
+        // FUNCIONAL: Misma composición de funciones puras para actualización
+        public ApiResponse<Aula> ActualizarAula(Aula aula) =>
+            ValidationHelper.Validar(aula,
+                a => ValidationHelper.NoVacio("código del aula")(a.CodigoAula),
+                a => ValidationHelper.NoNegativo("capacidad")(a.Capacidad)
+            );
     }
 }

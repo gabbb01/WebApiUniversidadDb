@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { ApiUniversidad } from '../../services/api-universidad';
 import { Estudiante } from '../../models/estudiante.model';
 import { CommonModule } from '@angular/common';
@@ -28,7 +28,7 @@ export class AdminEstudiantes implements OnInit {
 
     public modal: any;
 
-    constructor(private apiUniversidad: ApiUniversidad, private cdr: ChangeDetectorRef) { }
+    constructor(private apiUniversidad: ApiUniversidad, private cdr: ChangeDetectorRef, private zone: NgZone) { }
 
     ngOnInit(): void {
         this.obtenerEstudiantes();
@@ -107,30 +107,35 @@ inactivarEstudiante(id: number): void {
         text: "El estudiante ya no aparecerá en las listas activas.",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
         confirmButtonText: 'Sí, inactivar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            
-            this.apiUniversidad.inactivarEstudiante(id).subscribe({
-                next: () => {
-                    this.obtenerEstudiantes();
-                    Swal.fire({
-                        title: "¡Logrado!",
-                        text: "Estudiante inactivado exitosamente.",
-                        icon: "success",
-                    });
-                },
-                error: (error) => {
-                    console.error(error);
-                    Swal.fire({
-                        title: "Error",
-                        text: "Hubo un problema al procesar la solicitud.",
-                        icon: "error",
-                    });
-                },
+            this.zone.run(() => {
+                this.apiUniversidad.inactivarEstudiante(id).subscribe({
+                    next: () => {
+                        this.apiUniversidad.obtenerEstudiantes().subscribe({
+                            next: (data) => {
+                                this.estudiantes = data;
+                                this.cdr.detectChanges();
+                                Swal.fire({
+                                    title: "¡Logrado!",
+                                    text: "Estudiante inactivado exitosamente.",
+                                    icon: "success",
+                                });
+                            },
+                            error: () => this.obtenerEstudiantes()
+                        });
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        Swal.fire({
+                            title: "Error",
+                            text: "Hubo un problema al procesar la solicitud.",
+                            icon: "error",
+                        });
+                    },
+                });
             });
         }
     });

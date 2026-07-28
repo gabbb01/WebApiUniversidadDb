@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { ApiUniversidad } from '../../services/api-universidad';
 import { Aula } from '../../models/aula.model';
 import { CommonModule } from '@angular/common';
@@ -26,7 +26,7 @@ export class AdminAulas implements OnInit {
 
 	public modal: any;
 
-	constructor(private apiUniversidad: ApiUniversidad, private cdr: ChangeDetectorRef) { }
+	constructor(private apiUniversidad: ApiUniversidad, private cdr: ChangeDetectorRef, private zone: NgZone) { }
 
 	ngOnInit(): void {
 		this.obtenerAulas();
@@ -103,30 +103,35 @@ inactivarAula(id: number): void {
         text: "Asegúrate de que no haya clases programadas en este salón.",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, inactivar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            
-            this.apiUniversidad.inactivarAula(id).subscribe({
-                next: () => {
-                    this.obtenerAulas();
-                    Swal.fire({
-                        title: "Aula actualizada",
-                        text: "El estado del aula ha cambiado a inactivo.",
-                        icon: "success",
-                    });
-                },
-                error: (error) => {
-                    console.error(error);
-                    Swal.fire({
-                        title: "Error",
-                        text: "No se pudo actualizar el estado del aula.",
-                        icon: "error",
-                    });
-                },
+            this.zone.run(() => {
+                this.apiUniversidad.inactivarAula(id).subscribe({
+                    next: () => {
+                        this.apiUniversidad.obtenerAulas().subscribe({
+                            next: (data) => {
+                                this.aulas = data;
+                                this.cdr.detectChanges();
+                                Swal.fire({
+                                    title: "Aula actualizada",
+                                    text: "El estado del aula ha cambiado a inactivo.",
+                                    icon: "success",
+                                });
+                            },
+                            error: () => this.obtenerAulas()
+                        });
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se pudo actualizar el estado del aula.",
+                            icon: "error",
+                        });
+                    },
+                });
             });
         }
     });

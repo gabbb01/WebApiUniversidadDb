@@ -1,8 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using WebApiUniversidadDb.Features.Universidad.AppServices;
 using WebApiUniversidadDb.Features.Universidad.DomainServices;
 using WebApiUniversidadDb.Features.Universidad.Interfaces;
-using WebApiUniversidadDb.Infrastructure.Databases;
 using WebApiUniversidadDb.Infrastructure.Interfaces;
 using WebApiUniversidadDb.Infrastructure.Repository;
 
@@ -19,15 +17,8 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Base de datos
-builder.Services.AddDbContext<UniversidadDbContext>(
-    options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString(
-            "DbUniversidadConnectionString"
-        )
-    )
-);
+// Los repositories ahora reciben IConfiguration directamente (paradigma imperativo)
+// y manejan la conexión paso a paso con ADO.NET puro (SqlConnection, SqlCommand, SqlDataReader)
 
 // SERVICIOS PARA ASIGNATURAS
 builder.Services.AddScoped<
@@ -64,6 +55,15 @@ builder.Services.AddScoped<
     IProfesoresAppService,
     ProfesoresAppService>();
 builder.Services.AddScoped<ProfesoresDomainService>();
+
+// SERVICIOS PARA MATRICULAS
+builder.Services.AddScoped<
+    IMatriculasRepository,
+    MatriculasRepository>();
+builder.Services.AddScoped<
+    IMatriculasAppService,
+    MatriculasAppService>();
+builder.Services.AddScoped<MatriculasDomainService>();
 
 // Add services to the container.
 builder.Services.AddControllers();

@@ -1,4 +1,5 @@
-﻿using WebApiUniversidadDb.Commons.Models;
+using WebApiUniversidadDb.Commons.Functional;
+using WebApiUniversidadDb.Commons.Models;
 using WebApiUniversidadDb.Entities;
 
 namespace WebApiUniversidadDb.Features.Universidad.DomainServices
@@ -9,52 +10,25 @@ namespace WebApiUniversidadDb.Features.Universidad.DomainServices
         {
             
         }
-        public ApiResponse<Estudiante> AgregarEstudiante(Estudiante estudiante)
-        {
-            ApiResponse<Estudiante> apiResponse = new ApiResponse<Estudiante>();
-            apiResponse.Success = true;
-            if (string.IsNullOrEmpty(estudiante.NumeroCuenta) || estudiante.NumeroCuenta.Length != 11)
-            {
-                apiResponse.Success = false;
-                apiResponse.Message = "El numero de cuenta no puede estar vacio y deben ser 11 caracteres";
-            }
-            if (string.IsNullOrEmpty(estudiante.Nombre) || string.IsNullOrEmpty(estudiante.Apellido))
-            {
-                apiResponse.Success = false;
-                apiResponse.Message = "El nombre no puede estar vacio";
-            }
-            if (string.IsNullOrEmpty(estudiante.Correo))
-            {
-                apiResponse.Success = false;
-                apiResponse.Message = "El correo no puede estar vacio";
-            }
 
-            apiResponse.Data = estudiante;
-            return apiResponse;
+        // PARADIGMA FUNCIONAL: Composición de funciones puras como reglas de validación
+        // LongitudExacta es una función de fábrica que retorna un Func<string?, string?>
+        // Cada lambda compone la extracción del campo + la función de validación
+        public ApiResponse<Estudiante> AgregarEstudiante(Estudiante estudiante) =>
+            ValidationHelper.Validar(estudiante,
+                e => ValidationHelper.LongitudExacta("número de cuenta", 11)(e.NumeroCuenta),
+                e => ValidationHelper.NoVacio("nombre")(e.Nombre),
+                e => ValidationHelper.NoVacio("apellido")(e.Apellido),
+                e => ValidationHelper.NoVacio("correo")(e.Correo)
+            );
 
-        }
-        public ApiResponse<Estudiante> ActualizarEstudiante(Estudiante estudiante)
-        {
-            ApiResponse<Estudiante> apiResponse = new ApiResponse<Estudiante>();
-            apiResponse.Success = true;
-            if (string.IsNullOrEmpty(estudiante.NumeroCuenta) || estudiante.NumeroCuenta.Length != 11)
-            {
-                apiResponse.Success = false;
-                apiResponse.Message = "El numero de cuenta no puede estar vacio y deben ser 11 caracteres";
-            }
-            if (string.IsNullOrEmpty(estudiante.Nombre) || string.IsNullOrEmpty(estudiante.Apellido))
-            {
-                apiResponse.Success = false;
-                apiResponse.Message = "El nombre no puede estar vacio";
-            }
-            if (string.IsNullOrEmpty(estudiante.Correo))
-            {
-                apiResponse.Success = false;
-                apiResponse.Message = "El correo no puede estar vacio";
-            }
-
-            apiResponse.Data = estudiante;
-            return apiResponse;
-        }
+        // FUNCIONAL: Misma composición de funciones puras para actualización
+        public ApiResponse<Estudiante> ActualizarEstudiante(Estudiante estudiante) =>
+            ValidationHelper.Validar(estudiante,
+                e => ValidationHelper.LongitudExacta("número de cuenta", 11)(e.NumeroCuenta),
+                e => ValidationHelper.NoVacio("nombre")(e.Nombre),
+                e => ValidationHelper.NoVacio("apellido")(e.Apellido),
+                e => ValidationHelper.NoVacio("correo")(e.Correo)
+            );
     }
 }

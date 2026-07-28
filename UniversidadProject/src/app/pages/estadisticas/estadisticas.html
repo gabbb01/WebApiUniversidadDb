@@ -1,0 +1,181 @@
+<section class="stats-container">
+
+  <!-- ── HERO HEADER ─────────────────────────────────── -->
+  <div class="stats-hero">
+    <div class="hero-text">
+      <h1 class="hero-title">📊 Estadísticas Académicas</h1>
+      <p class="hero-subtitle">Análisis de rendimiento estudiantil usando los 4 paradigmas de programación</p>
+    </div>
+    <button class="btn-refresh" (click)="cargarDatos()">
+      <span>↻</span> Actualizar
+    </button>
+  </div>
+
+  <!-- ── PARADIGMAS CARDS ────────────────────────────── -->
+  <div class="paradigmas-grid">
+    <div class="paradigma-card paradigma-oop">
+      <div class="paradigma-icon">🏛️</div>
+      <div class="paradigma-body">
+        <h3 class="paradigma-nombre">OOP</h3>
+        <p class="paradigma-desc">Clases <code>EntidadBase</code>, <code>Matricula</code>, <code>Estudiante</code> con herencia, constructores y polimorfismo</p>
+      </div>
+    </div>
+    <div class="paradigma-card paradigma-imperativo">
+      <div class="paradigma-icon">⚙️</div>
+      <div class="paradigma-body">
+        <h3 class="paradigma-nombre">Imperativo</h3>
+        <p class="paradigma-desc"><code>CalculadoraPromedios</code> — variables mutables, ciclos <code>for/while</code> y condicionales <code>if/else</code></p>
+      </div>
+    </div>
+    <div class="paradigma-card paradigma-funcional">
+      <div class="paradigma-icon">λ</div>
+      <div class="paradigma-body">
+        <h3 class="paradigma-nombre">Funcional</h3>
+        <p class="paradigma-desc"><code>FunctionalHelper</code> — <code>map</code>, <code>filter</code>, <code>reduce</code>, recursividad y funciones puras</p>
+      </div>
+    </div>
+    <div class="paradigma-card paradigma-declarativo">
+      <div class="paradigma-icon">🗄️</div>
+      <div class="paradigma-body">
+        <h3 class="paradigma-nombre">Declarativo</h3>
+        <p class="paradigma-desc">SQL con <code>SELECT</code>, <code>WHERE</code>, <code>GROUP BY</code>, <code>ORDER BY</code>, <code>AVG</code>, <code>INNER JOIN</code></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STATS GENERALES (PARADIGMA IMPERATIVO) ─────── -->
+  <div class="section-card" *ngIf="!cargando">
+    <div class="section-header">
+      <h2 class="section-title">⚙️ Estadísticas Generales <span class="paradigma-tag imperativo">Imperativo</span></h2>
+      <p class="section-desc">Calculadas con <code>CalculadoraPromedios.cs</code> usando variables, ciclos for y condicionales if/else</p>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value accent-blue">{{ estadisticas.promedio | number: '1.1-2' }}</div>
+        <div class="metric-label">Promedio General</div>
+        <div class="metric-sub">{{ estadisticas.clasificacion }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value accent-green">{{ estadisticas.notaMaxima }}</div>
+        <div class="metric-label">Nota Máxima</div>
+        <div class="metric-sub">Mejor calificación</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value accent-yellow">{{ estadisticas.notaMinima }}</div>
+        <div class="metric-label">Nota Mínima</div>
+        <div class="metric-sub">Menor calificación</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value accent-cyan">{{ estadisticas.totalAprobados }}</div>
+        <div class="metric-label">Aprobados</div>
+        <div class="metric-sub">Nota ≥ 65</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value accent-red">{{ estadisticas.totalReprobados }}</div>
+        <div class="metric-label">Reprobados</div>
+        <div class="metric-sub">Nota &lt; 65</div>
+      </div>
+      <div class="metric-card clasificacion-card">
+        <div class="metric-icon">{{ getClasificacionIcon(estadisticas.clasificacion) }}</div>
+        <div class="metric-value">{{ estadisticas.clasificacion }}</div>
+        <div class="metric-label">Clasificación General</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FUNCIONAL: REDUCE max/min + suma ─────────────────── -->
+  <div class="funcional-section" *ngIf="todasLasMatriculas.length > 0">
+    <div class="section-header">
+      <h2 class="section-title">λ Análisis Funcional <span class="paradigma-tag funcional">Funcional</span></h2>
+      <p class="section-desc">Resultados de aplicar <code>reduce()</code> sobre todas las notas registradas individualmente</p>
+    </div>
+    <div class="funcional-grid">
+
+      <!-- NOTA MÁS ALTA -->
+      <div class="funcional-card">
+        <div class="func-header">
+          <code class="func-code">reduce((max, m) => m.nota > max.nota ? m : max)</code>
+          <span class="func-count accent-green">↑ MAX</span>
+        </div>
+        <div class="func-label">Nota Más Alta</div>
+        <ng-container *ngIf="notaMasAlta; else sinDatos1">
+          <div class="extremo-card aprobado-card">
+            <div class="extremo-nota">{{ notaMasAlta.nota }}</div>
+            <div class="extremo-info">
+              <div class="extremo-nombre">{{ notaMasAlta.nombreEstudiante }} {{ notaMasAlta.apellidoEstudiante }}</div>
+              <div class="extremo-asig">{{ notaMasAlta.nombreAsignatura }}</div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #sinDatos1>
+          <div class="func-empty">Sin notas registradas</div>
+        </ng-template>
+      </div>
+
+      <!-- NOTA MÁS BAJA -->
+      <div class="funcional-card">
+        <div class="func-header">
+          <code class="func-code">reduce((min, m) => m.nota &lt; min.nota ? m : min)</code>
+          <span class="func-count accent-red">↓ MIN</span>
+        </div>
+        <div class="func-label">Nota Más Baja</div>
+        <ng-container *ngIf="notaMasBaja; else sinDatos2">
+          <div class="extremo-card reprobado-card">
+            <div class="extremo-nota">{{ notaMasBaja.nota }}</div>
+            <div class="extremo-info">
+              <div class="extremo-nombre">{{ notaMasBaja.nombreEstudiante }} {{ notaMasBaja.apellidoEstudiante }}</div>
+              <div class="extremo-asig">{{ notaMasBaja.nombreAsignatura }}</div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #sinDatos2>
+          <div class="func-empty">Sin notas registradas</div>
+        </ng-template>
+      </div>
+
+      <!-- REDUCE SUMA -->
+      <div class="funcional-card reduce-card">
+        <div class="func-header">
+          <code class="func-code">reduce((acc, m) => acc + m.nota, 0)</code>
+        </div>
+        <div class="func-label">Suma Total de Notas</div>
+        <div class="reduce-value">{{ sumaTotal | number: '1.1-2' }}</div>
+        <div class="reduce-sub">sobre {{ totalConNota }} nota(s) registrada(s)</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DECLARATIVO: Promedios SQL GROUP BY ─────────── -->
+  <div class="section-card" *ngIf="promedios.length > 0">
+    <div class="section-header">
+      <h2 class="section-title">🗄️ Promedio por Estudiante <span class="paradigma-tag declarativo">SQL Declarativo</span></h2>
+      <p class="section-desc">Resultado de la consulta: <code>SELECT ... FROM Matriculas ... GROUP BY Estudiante ORDER BY Promedio DESC</code></p>
+    </div>
+    <div class="promedios-list">
+      <div *ngFor="let p of promedios; let i = index" class="promedio-item">
+        <div class="rank-badge" [class]="i < 3 ? 'rank-top' : ''">{{ i + 1 }}</div>
+        <div class="promedio-info">
+          <div class="promedio-name">{{ p.nombreEstudiante }} {{ p.apellidoEstudiante }}</div>
+          <div class="promedio-detail">{{ p.creditosAsignatura }} asignaturas · {{ getLetra(p.nota) }}</div>
+        </div>
+        <div class="bar-container">
+          <div class="bar-fill" [class]="getNotaClass(p.nota)" [style.width]="getBarWidth(p.nota)"></div>
+        </div>
+        <div [class]="'nota-value ' + getNotaClass(p.nota)">{{ p.nota | number: '1.1-2' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="promedios.length === 0 && !cargando">
+    <div class="empty-icon">📊</div>
+    <h3>No hay datos de matrículas aún</h3>
+    <p>Registra matrículas en la sección de Gestión de Matrículas para ver las estadísticas.</p>
+  </div>
+
+  <div class="loading-overlay" *ngIf="cargando">
+    <div class="spinner"></div>
+    <p>Calculando estadísticas...</p>
+  </div>
+
+</section>

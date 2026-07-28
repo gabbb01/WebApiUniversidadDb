@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApiUniversidadDb.Entities;
 using WebApiUniversidadDb.Features.Universidad.Interfaces;
@@ -44,7 +44,7 @@ namespace WebApiUniversidadDb.Controllers
         public async Task<IActionResult> InactivarEstudiante([FromRoute] int id)
         {
             await estudiantesAppService.InactivarEstudiante(id);
-            return Ok("Estudiante Inactivado");
+            return Ok(new { success = true, message = "Estudiante Inactivado" });
         }
     }
 }
