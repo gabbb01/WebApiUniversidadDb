@@ -1,6 +1,6 @@
 namespace WebApiUniversidadDb.Entities
 {
-    // PARADIGMA OOP: Herencia — Estudiante EXTIENDE EntidadBase
+    // PARADIGMA POO: Herencia — Estudiante EXTIENDE EntidadBase
     // Aplica: Herencia, Encapsulamiento con propiedades, Constructor explícito
     public class Estudiante : EntidadBase
     {

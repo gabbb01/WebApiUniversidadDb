@@ -19,7 +19,7 @@ namespace WebApiUniversidadDb.Commons.Functional
                 nota >= 90 ? "A (Excelente)" :
                 nota >= 80 ? "B (Muy Bueno)" :
                 nota >= 70 ? "C (Bueno)" :
-                nota >= 60 ? "D (Suficiente)" : "F (Reprobado)");
+                nota >= 65 ? "D (Suficiente)" : "F (Reprobado)");
 
         /// <summary>
         /// MAP: Transforma cada matrícula a un string descriptivo.
@@ -38,13 +38,13 @@ namespace WebApiUniversidadDb.Commons.Functional
         /// Función pura — no modifica la lista original, retorna nueva colección.
         /// </summary>
         public static IEnumerable<double> FiltrarAprobadas(IEnumerable<double> notas) =>
-            notas.Where(nota => nota >= 60);  // lambda predicado puro
+            notas.Where(nota => nota >= 65);  // lambda predicado puro
 
         /// <summary>
         /// FILTER: Retorna solo las notas reprobadas (< 60).
         /// </summary>
         public static IEnumerable<double> FiltrarReprobadas(IEnumerable<double> notas) =>
-            notas.Where(nota => nota < 60);
+            notas.Where(nota => nota < 65);
 
         /// <summary>
         /// FILTER: Función genérica de filtrado de alto orden.
