@@ -12,7 +12,7 @@ import { EstadisticaGenerales, PromedioEstudiante } from '../models/estadistica.
 })
 export class ApiUniversidad {
 
-    private apiUrl = "https://localhost:7004/api";
+    private apiUrl = "http://www.cruduniversidad.somee.com/api";
     constructor(private httpClient : HttpClient) {
     }
 
